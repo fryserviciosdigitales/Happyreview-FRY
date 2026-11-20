@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>HAPPYREVIEW</title>
+  <script src="config.js"></script>
+  <style>
+  :root {
+    --tinta: #0f1b2d;
+    --tinta-suave: #1e3050;
+    --texto: #0f1b2d;
+    --texto-2: #3a475a;
+    --apagado: #5b6677;
+    --papel: #f3f5f7;
+    --superficie: #ffffff;
+    --linea: #dde2e8;
+    --linea-fuerte: #b9c2ce;
+    --sol: #ffc21f;
+    --sol-fuerte: #e59f00;
+    --sol-suave: #fff1c2;
+    --pos: #0e7a4f;
+    --pos-suave: #dcf2e6;
+    --neg: #b8344a;
+    --neg-suave: #fbe2e6;
+    --info: #1c5fb8;
+    --info-suave: #e0ecfb;
+    --fuente: ui-rounded, "SF Pro Rounded", "Nunito", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  h1, h2, h3, p { margin: 0; }
+  h1 { font-size: 1.75rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 1.25rem; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; }
+  a { color: var(--info); }
+  :focus-visible { outline: 3px solid var(--info); outline-offset: 2px; }
+
+  /* ---------- Botones ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, transform .1s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled, .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  .btn-primario { background: var(--tinta); color: #fff; }
+  .btn-primario:hover:not(:disabled) { background: var(--tinta-suave); }
+  .btn-secundario { background: var(--superficie); color: var(--texto); border-color: var(--linea-fuerte); }
+  .btn-secundario:hover:not(:disabled) { border-color: var(--tinta); }
+  .btn-sol { background: var(--sol); color: var(--tinta); }
+  .btn-sol:hover:not(:disabled) { background: #ffb300; }
+  .btn-barra { min-height: 36px; padding: 0 14px; color: #fff; border-color: rgba(255, 255, 255, .35); background: transparent; }
+  .btn-barra:hover { background: rgba(255, 255, 255, .12); }
+  .btn-pequeno { min-height: 34px; padding: 0 12px; font-size: .9rem; }
+  .btn-peligro { background: #fff; color: var(--neg); border-color: var(--neg); }
+  .btn-peligro:hover:not(:disabled) { background: var(--neg); color: #fff; }
+  .btn-peligro-solido { background: var(--neg); color: #fff; }
+  .btn-peligro-solido:hover:not(:disabled) { background: #8d2335; }
+  .btn-bloque { width: 100%; }
+  .btn-grande { min-height: 56px; font-size: 1.1rem; border-radius: 14px; }
+
+  /* ---------- Formularios ---------- */
+  .campo { display: grid; gap: 6px; margin-bottom: 16px; }
+  .campo label, .campo .etiqueta-campo { font-size: .9rem; font-weight: 700; color: var(--texto-2); }
+  .campo input[type="text"],
+  .campo input[type="email"],
+  .campo input[type="url"],
+  .campo input[type="password"],
+  .campo textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+  }
+  .campo select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+  }
+  .campo textarea { min-height: 120px; resize: vertical; }
+  .campo input:focus, .campo textarea:focus, .campo select:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px var(--info-suave); }
+  .campo input[readonly] { background: var(--papel); }
+  .ayuda { font-size: .85rem; color: var(--apagado); }
+  .casilla { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: .95rem; }
+  .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--tinta); flex: none; }
+  .casilla label { font-weight: 600; color: var(--texto-2); }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* ---------- Avisos ---------- */
+  .aviso { padding: 10px 14px; border-radius: 10px; font-size: .95rem; font-weight: 600; margin-bottom: 16px; }
+  .aviso-ok { background: var(--pos-suave); color: #0a5a3a; }
+  .aviso-error { background: var(--neg-suave); color: #8d2335; }
+  .aviso-info { background: var(--info-suave); color: #164a91; }
+
+  /* ---------- Marca ---------- */
+  .marca { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .01em; color: inherit; text-decoration: none; }
+  .marca-icono {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--sol);
+    color: var(--tinta);
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  /* ---------- Cara (lo memorable de la marca) ---------- */
+  .cara { display: block; width: 120px; height: 120px; }
+  .cara-fondo { fill: var(--sol); stroke: var(--tinta); stroke-width: 4; }
+  .cara-ojo { fill: var(--tinta); }
+  .cara-boca { fill: none; stroke: var(--tinta); stroke-width: 6; stroke-linecap: round; }
+  .cara-brinco { animation: brinco .35s ease-out; }
+  @keyframes brinco {
+    0% { transform: scale(.9) rotate(-4deg); }
+    60% { transform: scale(1.06) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* ---------- Acceso ---------- */
+  .acceso { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); }
+  .acceso-lado {
+    background: var(--sol);
+    color: var(--tinta);
+    padding: 20px 20px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 16px;
+  }
+  .acceso-lado .marca { grid-column: 1 / -1; }
+  .acceso-lado .marca-icono { background: var(--tinta); color: var(--sol); }
+  .acceso-lado .cara { width: 64px; height: 64px; }
+  .acceso-lado .cara-fondo { fill: #ffd34f; }
+  .acceso-titulo { font-size: 1.15rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; }
+  .acceso-texto { display: none; }
+  .acceso-contenido { display: grid; place-items: center; padding: 28px 20px 40px; }
+  .acceso-form { width: 100%; max-width: 380px; }
+  .acceso-form h1 { margin-bottom: 6px; }
+  .acceso-form .sub { color: var(--apagado); margin-bottom: 24px; }
+  .enlace-panel { margin-top: 14px; font-size: .95rem; }
+
+  @media (min-width: 860px) {
+    .acceso { grid-template-columns: minmax(340px, 5fr) 6fr; }
+    .acceso-lado {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: space-between;
+      justify-items: start;
+      padding: 48px;
+      gap: 32px;
+    }
+    .acceso-lado .cara { width: 200px; height: 200px; }
+    .acceso-titulo { font-size: 2.4rem; line-height: 1.05; letter-spacing: -0.03em; max-width: 12ch; }
+    .acceso-texto { display: block; margin-top: 14px; max-width: 34ch; font-size: 1.05rem; color: #3b2f00; }
+  }
+
+  /* ---------- Panel de administración ---------- */
+  .barra { background: var(--tinta); color: #fff; }
+  .barra-in {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+  }
+  .barra .marca-icono { width: 28px; height: 28px; }
+  .nav { display: flex; gap: 4px; flex: 1; }
+  .nav a {
+    color: #cdd7e6;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-bottom: 3px solid transparent;
+  }
+  .nav a:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+  .nav a[aria-current="page"] { color: #fff; border-bottom-color: var(--sol); border-radius: 8px 8px 0 0; }
+  .barra-usuario { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: #cdd7e6; }
+  .barra-usuario span { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .contenedor { max-width: 1120px; margin: 0 auto; padding: 24px 16px 56px; }
+  .cabecera-pagina { margin-bottom: 20px; }
+  .cabecera-pagina p { color: var(--apagado); margin-top: 4px; }
+
+  .panel { background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; padding: 20px; }
+  .panel-titulo { margin-bottom: 14px; }
+
+  /* ---------- Marcador del dashboard ---------- */
+  .marcador { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--superficie); border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; }
+  .marcador-media {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--animo, var(--sol));
+    transition: background-color .4s;
+  }
+  .marcador-media .cara { width: 96px; height: 96px; flex: none; }
+  .media-numero { font-size: 3.75rem; line-height: 1; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .media-numero small { font-size: 1.1rem; font-weight: 700; letter-spacing: 0; margin-left: 4px; color: var(--texto-2); }
+  .media-etiqueta { font-weight: 700; margin-top: 6px; color: var(--texto-2); }
+  .datos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .dato { padding: 18px 20px; border-top: 1px solid var(--linea); }
+  .dato:nth-child(even) { border-left: 1px solid var(--linea); }
+  .dato-etiqueta { font-size: .9rem; font-weight: 700; color: var(--apagado); }
+  .dato-valor { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .dato-detalle { font-size: .85rem; color: var(--apagado); }
+  .dato-pos .dato-valor { color: var(--pos); }
+  .dato-neg .dato-valor { color: var(--neg); }
+  .reparto { grid-column: 1 / -1; padding: 16px 20px 18px; border-top: 1px solid var(--linea); }
+  .reparto-barra { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--linea); margin-top: 8px; }
+  .reparto-pos { background: var(--pos); transition: width .5s; }
+  .reparto-neg { background: var(--neg); transition: width .5s; }
+
+  @media (min-width: 820px) {
+    .marcador { grid-template-columns: minmax(300px, 4fr) 7fr; }
+    .marcador-media { padding: 32px; }
+    .datos { border-left: 1px solid var(--linea); }
+    .dato:nth-child(-n+2) { border-top: 0; }
+  }
+
+  /* ---------- Tablas ---------- */
+  .tabla-caja { overflow-x: auto; border: 1px solid var(--linea); border-radius: 12px; background: var(--superficie); }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th { text-align: left; font-size: .85rem; font-weight: 700; color: var(--apagado); background: #f8f9fb; padding: 10px 14px; border-bottom: 1px solid var(--linea); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.nowrap { white-space: nowrap; }
+  td .secundario { display: block; color: var(--apagado); font-size: .85rem; }
+  .comentario { max-width: 46ch; white-space: pre-line; overflow-wrap: anywhere; }
+  .vacio { padding: 28px 16px; text-align: center; color: var(--apagado); }
+  .estrellas-texto { color: var(--sol-fuerte); letter-spacing: 2px; white-space: nowrap; font-size: 1.05rem; }
+  .estrellas-texto .apagada { color: var(--linea-fuerte); }
+  .etiqueta { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+  .etiqueta-pos { background: var(--pos-suave); color: #0a5a3a; }
+  .etiqueta-neg { background: var(--neg-suave); color: #8d2335; }
+  .etiqueta-info { background: var(--info-suave); color: #164a91; }
+  .etiqueta-sol { background: var(--sol-suave); color: #6b4a00; }
+  .etiqueta-apagada { background: var(--papel); color: var(--apagado); border: 1px solid var(--linea); }
+  .enlace-corto { display: inline-block; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+  .celda-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .bloque { margin-top: 28px; }
+  .bloque > h2 { margin-bottom: 12px; }
+
+  details.panel summary { cursor: pointer; font-weight: 800; font-size: 1.05rem; }
+  details.panel[open] summary { margin-bottom: 16px; }
+  .form-estrecho { max-width: 380px; }
+
+  /* ---------- Empresas ---------- */
+  .dos-columnas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (min-width: 980px) {
+    .dos-columnas { grid-template-columns: 340px minmax(0, 1fr); }
+    .dos-columnas .panel { position: sticky; top: 16px; }
+  }
+  .editando { border-color: var(--sol-fuerte); box-shadow: 0 0 0 3px var(--sol-suave); }
+  .lista-titulo { margin-bottom: 12px; }
+
+  .velo {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(15, 27, 45, .62);
+    overflow-y: auto;
+  }
+  .ventana { width: 100%; max-width: 440px; background: var(--superficie); border-radius: 18px; padding: 24px; }
+  .ventana h2 { margin-bottom: 4px; overflow-wrap: anywhere; }
+  .ventana .ayuda { margin-bottom: 16px; }
+  .qr-marco { display: grid; place-items: center; padding: 12px; margin-bottom: 16px; border: 1px solid var(--linea); border-radius: 12px; background: #fff; }
+  .qr-marco canvas { width: 100%; max-width: 280px; height: auto; image-rendering: pixelated; }
+  .ventana .acciones { margin-top: 4px; }
+  .ventana-ancha { max-width: 560px; }
+  .campo-fila { display: flex; gap: 8px; align-items: stretch; }
+  .campo-fila input { flex: 1 1 auto; min-width: 0; }
+  .clave-nueva {
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    border: 2px dashed var(--sol-fuerte);
+    border-radius: 12px;
+    background: var(--sol-suave);
+  }
+  .clave-nueva p { font-size: .9rem; color: var(--texto-2); }
+  .clave-nueva strong {
+    display: block;
+    margin: 4px 0 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.35rem;
+    letter-spacing: .04em;
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+  .separador { margin: 18px 0; border: 0; border-top: 1px solid var(--linea); }
+  .tarjeta-acceso { display: grid; gap: 4px; margin-bottom: 16px; }
+  .detalle-fila { font-size: .9rem; color: var(--texto-2); margin-bottom: 12px; overflow-wrap: anywhere; }
+  .detalle-fila strong { color: var(--texto); }
+
+  /* ---------- Pantalla del cliente (QR) ---------- */
+  .cliente {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--animo, #ffd34f);
+    transition: background-color .45s ease;
+  }
+  .cliente-columna { width: 100%; max-width: 520px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; }
+  .cliente-cabecera { padding: 32px 20px 24px; display: grid; justify-items: center; gap: 14px; text-align: center; }
+  .cliente-cabecera .cara { width: 132px; height: 132px; }
+  .cliente-empresa { font-size: 1.1rem; font-weight: 800; color: var(--tinta); overflow-wrap: anywhere; }
+  .hoja {
+    flex: 1;
+    background: var(--superficie);
+    border-radius: 28px 28px 0 0;
+    padding: 28px 20px 40px;
+    text-align: center;
+  }
+  .hoja h1 { margin-bottom: 18px; font-size: 1.6rem; }
+  .hoja .sub { color: var(--texto-2); margin: -6px auto 20px; max-width: 36ch; }
+
+  .estrellas { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+  .estrella {
+    padding: 4px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+    border-radius: 12px;
+    transition: transform .12s;
+  }
+  .estrella:hover:not(:disabled) { transform: scale(1.12); }
+  .estrella:active:not(:disabled) { transform: scale(.94); }
+  .estrella:disabled { cursor: default; }
+  .estrella svg { width: 52px; height: 52px; }
+  .estrella polygon { fill: #e3e7ec; stroke: #e3e7ec; stroke-width: 2.4; stroke-linejoin: round; transition: fill .15s, stroke .15s; }
+  .estrella.activa polygon { fill: var(--sol); stroke: var(--sol); }
+  .animo-texto { min-height: 30px; font-size: 1.15rem; font-weight: 800; color: var(--texto-2); margin-bottom: 8px; }
+
+  .formulario-privado { text-align: left; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--linea); }
+  .formulario-privado h2 { margin-bottom: 4px; }
+  .formulario-privado .sub { text-align: left; margin: 0 0 16px; max-width: none; }
+  .contador { text-align: right; font-size: .8rem; color: var(--apagado); }
+
+  .resultado { padding-top: 4px; }
+  .resultado h1 { margin-bottom: 10px; }
+  .resultado p { color: var(--texto-2); margin: 0 auto 24px; max-width: 34ch; }
+  .resultado .btn { width: 100%; }
+
+  @media (min-width: 560px) {
+    .cliente { justify-content: center; }
+    .cliente-columna { flex: none; }
+    .hoja { border-radius: 28px; margin-bottom: 40px; padding-bottom: 36px; flex: none; }
+  }
+
+  @media (max-width: 380px) {
+    .estrella svg { width: 46px; height: 46px; }
+    .datos { grid-template-columns: minmax(0, 1fr); }
+    .dato:nth-child(even) { border-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+  <script>
+  /**
+   * Ayudante común de todas las páginas.
+   *
+   * En la aplicación de Apps Script no hace casi nada: google.script.run ya existe y el
+   * servidor entrega los datos de la página en APP. En la web estática (GitHub Pages) APP
+   * llega como {"modo":"web"}: aquí se crea google.script.run, que llama a la aplicación
+   * de Apps Script con un POST de texto plano (así el navegador no necesita preflight
+   * CORS), y se piden los datos de la página que en Apps Script inyecta el servidor.
+   */
+  window.HR = (function () {
+    const TIEMPO_MAXIMO_MS = 45000;
+
+    function baseWeb() {
+      return location.origin + location.pathname.replace(/[^\/]*$/, '');
+    }
+
+    function mensajeFatal(texto) {
+      document.body.textContent = '';
+      const parrafo = document.createElement('p');
+      parrafo.style.cssText = 'max-width:34rem;margin:3rem auto;padding:0 1rem;font:16px/1.5 system-ui,sans-serif;color:#0f1b2d';
+      parrafo.textContent = texto;
+      document.body.appendChild(parrafo);
+    }
+
+    function instalarApi(apiUrl, origen) {
+      function crear(exito, fallo) {
+        return new Proxy({}, {
+          get: function (destino, nombre) {
+            if (nombre === 'withSuccessHandler') {
+              return function (funcion) { return crear(funcion, fallo); };
+            }
+            if (nombre === 'withFailureHandler') {
+              return function (funcion) { return crear(exito, funcion); };
+            }
+            if (typeof nombre !== 'string') {
+              return undefined;
+            }
+            return function () {
+              const argumentos = Array.prototype.slice.call(arguments);
+              const control = typeof AbortController === 'function' ? new AbortController() : null;
+              const reloj = control ? setTimeout(function () { control.abort(); }, TIEMPO_MAXIMO_MS) : null;
+
+              fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ fn: nombre, args: argumentos, origen: origen }),
+                redirect: 'follow',
+                signal: control ? control.signal : undefined
+              })
+                .then(function (respuesta) {
+                  if (!respuesta.ok) {
+                    throw new Error('HTTP ' + respuesta.status);
+                  }
+                  return respuesta.json();
+                })
+                .then(
+                  function (json) { return { json: json, error: null }; },
+                  function (error) { return { json: null, error: error }; }
+                )
+                .then(function (salida) {
+                  if (reloj) {
+                    clearTimeout(reloj);
+                  }
+                  if (salida.error || !salida.json || salida.json.error) {
+                    if (fallo) {
+                      fallo(salida.error || new Error(salida.json && salida.json.error ? salida.json.error : 'Respuesta no válida'));
+                    }
+                  } else if (exito) {
+                    exito(salida.json.resultado);
+                  }
+                });
+            };
+          }
+        });
+      }
+      window.google = { script: { run: crear(null, null) } };
+    }
+
+    /**
+     * Prepara la página y llama a listo() cuando APP ya está completo.
+     * Si el servidor responde con otra página (por ejemplo el login porque caducó la
+     * sesión), redirige a ella.
+     */
+    function preparar(APP, pagina, listo) {
+      if (APP.modo !== 'web') {
+        listo();
+        return;
+      }
+
+      const configuracion = window.HAPPYREVIEW_CONFIG || {};
+      const apiUrl = String(configuracion.apiUrl || '');
+      const valida = /^https:\/\/script\.google\.com\/[^\s?#]+\/exec$/.test(apiUrl)
+        || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(apiUrl);
+      if (!valida) {
+        mensajeFatal('Falta configurar la web: abre el archivo config.js y pega en apiUrl la dirección de la aplicación de Apps Script (la que termina en /exec).');
+        return;
+      }
+
+      // Hasta que la página esté lista no hay manejadores: sin esto, un formulario enviado
+      // demasiado pronto se enviaría por la URL (con la contraseña a la vista).
+      let preparada = false;
+      document.addEventListener('submit', function (evento) {
+        if (!preparada) {
+          evento.preventDefault();
+        }
+      }, true);
+
+      const base = baseWeb();
+      instalarApi(apiUrl, base);
+
+      const consulta = new URLSearchParams(location.search);
+      const parametros = {};
+      ['e', 'c', 'token', 'salir', 'aviso'].forEach(function (clave) {
+        if (consulta.has(clave)) {
+          parametros[clave] = consulta.get(clave);
+        }
+      });
+
+      window.google.script.run
+        .withSuccessHandler(function (respuesta) {
+          if (!respuesta || !respuesta.ok) {
+            mensajeFatal(respuesta && respuesta.mensaje ? respuesta.mensaje : 'No se pudo cargar la página. Inténtalo de nuevo en unos segundos.');
+            return;
+          }
+          if (respuesta.pagina !== pagina) {
+            let destino = base + '?page=' + respuesta.pagina;
+            if (respuesta.pagina === 'login' && respuesta.datos && respuesta.datos.tipo === 'info') {
+              destino += '&aviso=caducada';
+            }
+            location.replace(destino);
+            return;
+          }
+          Object.assign(APP, respuesta.datos, { baseUrl: base });
+          if (respuesta.titulo) {
+            document.title = respuesta.titulo;
+          }
+          preparada = true;
+          listo();
+        })
+        .withFailureHandler(function () {
+          mensajeFatal('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo en unos segundos.');
+        })
+        .obtenerDatosPagina(pagina, parametros);
+    }
+
+    /**
+     * Ventana de confirmación dentro de la página (los diálogos del navegador no están
+     * disponibles dentro de Apps Script). opciones: { titulo, texto, boton, alAceptar }.
+     */
+    function confirmar(opciones) {
+      const velo = document.createElement('div');
+      velo.className = 'velo';
+      const ventana = document.createElement('div');
+      ventana.className = 'ventana';
+      ventana.setAttribute('role', 'alertdialog');
+      ventana.setAttribute('aria-modal', 'true');
+
+      const titulo = document.createElement('h2');
+      titulo.textContent = opciones.titulo;
+      const texto = document.createElement('p');
+      texto.className = 'ayuda';
+      texto.textContent = opciones.texto;
+      const acciones = document.createElement('div');
+      acciones.className = 'acciones';
+
+      const aceptar = document.createElement('button');
+      aceptar.type = 'button';
+      aceptar.className = 'btn btn-peligro-solido';
+      aceptar.textContent = opciones.boton || 'Eliminar';
+      const cancelar = document.createElement('button');
+      cancelar.type = 'button';
+      cancelar.className = 'btn btn-secundario';
+      cancelar.textContent = 'Cancelar';
+
+      function cerrar() {
+        document.removeEventListener('keydown', alTeclear);
+        if (velo.parentNode) {
+          velo.parentNode.removeChild(velo);
+        }
+      }
+      function alTeclear(evento) {
+        if (evento.key === 'Escape') {
+          cerrar();
+        }
+      }
+
+      aceptar.addEventListener('click', function () {
+        cerrar();
+        opciones.alAceptar();
+      });
+      cancelar.addEventListener('click', cerrar);
+      velo.addEventListener('click', function (evento) {
+        if (evento.target === velo) {
+          cerrar();
+        }
+      });
+      document.addEventListener('keydown', alTeclear);
+
+      acciones.appendChild(aceptar);
+      acciones.appendChild(cancelar);
+      ventana.appendChild(titulo);
+      ventana.appendChild(texto);
+      ventana.appendChild(acciones);
+      velo.appendChild(ventana);
+      document.body.appendChild(velo);
+      cancelar.focus();
+    }
+
+    /** Copia un texto al portapapeles; devuelve true si lo consiguió. */
+    function copiar(texto, campoAuxiliar) {
+      try {
+        if (campoAuxiliar) {
+          campoAuxiliar.focus();
+          campoAuxiliar.select();
+          return document.execCommand('copy');
+        }
+        const area = document.createElement('textarea');
+        area.value = texto;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        const copiado = document.execCommand('copy');
+        document.body.removeChild(area);
+        return copiado;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    return { preparar: preparar, confirmar: confirmar, copiar: copiar, baseWeb: baseWeb };
+  })();
+</script>
+</head>
+<body>
+  <header class="barra">
+    <div class="barra-in">
+      <a class="marca" id="enlace-marca" href="#"><span class="marca-icono" aria-hidden="true">★</span><span>HAPPYREVIEW</span></a>
+      <nav class="nav" aria-label="Principal">
+        <a id="nav-dashboard" href="#">Panel</a>
+        <a id="nav-empresas" href="#">Empresas</a>
+        <a id="nav-usuarios" href="#" aria-current="page">Usuarios</a>
+      </nav>
+      <div class="barra-usuario">
+        <span id="usuario-nombre"></span>
+        <a id="enlace-salir" class="btn btn-barra" href="#">Salir</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="cabecera-pagina">
+      <h1>Usuarios</h1>
+      <p>Cuentas que pueden entrar al panel de administración. Las empresas no aparecen aquí: su acceso se gestiona desde cada empresa.</p>
+    </div>
+
+    <div id="aviso" class="aviso" role="alert" hidden></div>
+
+    <div class="dos-columnas">
+      <section class="panel" aria-labelledby="titulo-formulario">
+        <h2 class="panel-titulo" id="titulo-formulario">Nuevo usuario</h2>
+        <form id="form-usuario" novalidate>
+          <div class="campo">
+            <label for="email">Email</label>
+            <input id="email" type="email" maxlength="254" autocomplete="off" required>
+          </div>
+          <div class="campo">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" maxlength="80" autocomplete="off">
+          </div>
+          <div class="campo">
+            <label for="rol">Rol</label>
+            <select id="rol">
+              <option value="ADMIN">ADMIN: puede entrar al panel</option>
+              <option value="USUARIO">USUARIO: sin acceso al panel</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="password" id="etiqueta-password">Contraseña</label>
+            <input id="password" type="password" autocomplete="new-password" minlength="6">
+            <span class="ayuda" id="ayuda-password">Mínimo 6 caracteres.</span>
+          </div>
+
+          <div id="aviso-formulario" class="aviso" role="alert" hidden></div>
+
+          <div class="acciones">
+            <button id="btn-guardar" class="btn btn-primario" type="submit">Crear usuario</button>
+            <button id="btn-cancelar" class="btn btn-secundario" type="button" hidden>Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <section aria-labelledby="titulo-lista">
+        <h2 class="lista-titulo" id="titulo-lista">Usuarios registrados (<span id="contador">0</span>)</h2>
+        <div class="tabla-caja">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-usuarios"></tbody>
+          </table>
+          <p class="vacio" id="vacio" hidden>No hay usuarios.</p>
+        </div>
+        <p class="ayuda">Tu propia contraseña se cambia desde Resumen. Debe quedar siempre al menos un administrador.</p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const APP = {"modo":"web"};
+
+    HR.preparar(APP, 'usuarios', function () {
+      const TOKEN = APP.token;
+
+      const aviso = document.getElementById('aviso');
+      const avisoFormulario = document.getElementById('aviso-formulario');
+      const formulario = document.getElementById('form-usuario');
+      const campoEmail = document.getElementById('email');
+      const campoNombre = document.getElementById('nombre');
+      const campoRol = document.getElementById('rol');
+      const campoPassword = document.getElementById('password');
+      const botonGuardar = document.getElementById('btn-guardar');
+      const botonCancelar = document.getElementById('btn-cancelar');
+      const cuerpo = document.getElementById('tabla-usuarios');
+
+      let usuarios = [];
+      let actual = '';
+      let editando = false;
+
+      function urlPanel(pagina) {
+        return APP.baseUrl + '?page=' + pagina + '&token=' + encodeURIComponent(TOKEN);
+      }
+
+      function mostrarAviso(elemento, texto, tipo) {
+        elemento.textContent = texto;
+        elemento.className = 'aviso aviso-' + (tipo || 'info');
+        elemento.hidden = !texto;
+      }
+
+      function crear(etiqueta, clase, texto) {
+        const nodo = document.createElement(etiqueta);
+        if (clase) {
+          nodo.className = clase;
+        }
+        if (texto !== undefined) {
+          nodo.textContent = texto;
+        }
+        return nodo;
+      }
+
+      function sesionCaducada() {
+        const enlace = crear('a', '', 'Iniciar sesión');
+        enlace.href = APP.baseUrl;
+        enlace.target = '_top';
+        mostrarAviso(aviso, 'Tu sesión ha caducado. ', 'info');
+        aviso.appendChild(enlace);
+      }
+
+      function fallo(elemento, respuesta) {
+        if (respuesta && respuesta.sesionExpirada) {
+          sesionCaducada();
+          return;
+        }
+        mostrarAviso(elemento, respuesta && respuesta.mensaje ? respuesta.mensaje : 'No se pudo completar la operación.', 'error');
+      }
+
+      /* ---------- Cabecera ---------- */
+      document.getElementById('enlace-marca').href = urlPanel('dashboard');
+      document.getElementById('nav-dashboard').href = urlPanel('dashboard');
+      document.getElementById('nav-empresas').href = urlPanel('empresas');
+      document.getElementById('nav-usuarios').href = urlPanel('usuarios');
+      document.getElementById('enlace-salir').href = APP.baseUrl + '?page=login&salir=' + encodeURIComponent(TOKEN);
+      document.getElementById('usuario-nombre').textContent = APP.usuario;
+
+      /* ---------- Formulario ---------- */
+      function modoCrear() {
+        editando = false;
+        formulario.reset();
+        campoEmail.readOnly = false;
+        document.getElementById('titulo-formulario').textContent = 'Nuevo usuario';
+        document.getElementById('etiqueta-password').textContent = 'Contraseña';
+        document.getElementById('ayuda-password').textContent = 'Mínimo 6 caracteres.';
+        botonGuardar.textContent = 'Crear usuario';
+        botonCancelar.hidden = true;
+        mostrarAviso(avisoFormulario, '', 'info');
+      }
+
+      function modoEditar(usuario) {
+        editando = true;
+        campoEmail.value = usuario.email;
+        campoEmail.readOnly = true;
+        campoNombre.value = usuario.nombre;
+        campoRol.value = usuario.rol;
+        campoPassword.value = '';
+        const esYo = usuario.email.toLowerCase() === actual.toLowerCase();
+        campoPassword.disabled = esYo;
+        document.getElementById('titulo-formulario').textContent = 'Editar usuario';
+        document.getElementById('etiqueta-password').textContent = 'Contraseña nueva';
+        document.getElementById('ayuda-password').textContent = esYo
+          ? 'Tu propia contraseña se cambia desde Resumen.'
+          : 'Déjala vacía para no cambiarla. Mínimo 6 caracteres.';
+        botonGuardar.textContent = 'Guardar cambios';
+        botonCancelar.hidden = false;
+        mostrarAviso(avisoFormulario, '', 'info');
+        formulario.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        campoNombre.focus();
+      }
+
+      botonCancelar.addEventListener('click', function () {
+        campoPassword.disabled = false;
+        modoCrear();
+      });
+
+      formulario.addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const datos = {
+          email: campoEmail.value.trim(),
+          nombre: campoNombre.value.trim(),
+          rol: campoRol.value,
+          password: campoPassword.value,
+          editando: editando
+        };
+        if (!datos.email) {
+          mostrarAviso(avisoFormulario, 'Escribe el email del usuario.', 'error');
+          return;
+        }
+        if (!editando && datos.password.length < 6) {
+          mostrarAviso(avisoFormulario, 'La contraseña debe tener al menos 6 caracteres.', 'error');
+          return;
+        }
+        mostrarAviso(avisoFormulario, '', 'info');
+        botonGuardar.disabled = true;
+
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            botonGuardar.disabled = false;
+            if (!respuesta || !respuesta.ok) {
+              fallo(avisoFormulario, respuesta);
+              return;
+            }
+            const mensaje = respuesta.creado ? 'Usuario creado.' : 'Cambios guardados.';
+            campoPassword.disabled = false;
+            modoCrear();
+            cargar(mensaje);
+          })
+          .withFailureHandler(function () {
+            botonGuardar.disabled = false;
+            mostrarAviso(avisoFormulario, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+          })
+          .guardarUsuario(TOKEN, datos);
+      });
+
+      /* ---------- Tabla ---------- */
+      function pintar() {
+        document.getElementById('contador').textContent = String(usuarios.length);
+        document.getElementById('vacio').hidden = usuarios.length > 0;
+        cuerpo.textContent = '';
+
+        usuarios.forEach(function (usuario) {
+          const esYo = usuario.email.toLowerCase() === actual.toLowerCase();
+          const fila = crear('tr');
+          fila.appendChild(crear('td', '', usuario.email + (esYo ? ' (tú)' : '')));
+          fila.appendChild(crear('td', '', usuario.nombre));
+
+          const tdRol = crear('td', 'nowrap');
+          tdRol.appendChild(crear('span', 'etiqueta ' + (usuario.rol === 'ADMIN' ? 'etiqueta-sol' : 'etiqueta-apagada'), usuario.rol));
+          fila.appendChild(tdRol);
+
+          const tdAcciones = crear('td');
+          const contenedor = crear('div', 'celda-acciones');
+          const botonEditar = crear('button', 'btn btn-secundario btn-pequeno', 'Editar');
+          botonEditar.type = 'button';
+          botonEditar.setAttribute('aria-label', 'Editar a ' + usuario.email);
+          botonEditar.addEventListener('click', function () {
+            modoEditar(usuario);
+          });
+          contenedor.appendChild(botonEditar);
+
+          if (!esYo) {
+            const botonEliminar = crear('button', 'btn btn-peligro btn-pequeno', 'Eliminar');
+            botonEliminar.type = 'button';
+            botonEliminar.setAttribute('aria-label', 'Eliminar a ' + usuario.email);
+            botonEliminar.addEventListener('click', function () {
+              eliminar(usuario);
+            });
+            contenedor.appendChild(botonEliminar);
+          }
+          tdAcciones.appendChild(contenedor);
+          fila.appendChild(tdAcciones);
+          cuerpo.appendChild(fila);
+        });
+      }
+
+      function eliminar(usuario) {
+        HR.confirmar({
+          titulo: '¿Eliminar a ' + usuario.email + '?',
+          texto: 'Dejará de poder entrar a HAPPYREVIEW. No se puede deshacer.',
+          boton: 'Eliminar usuario',
+          alAceptar: function () {
+            google.script.run
+              .withSuccessHandler(function (respuesta) {
+                if (!respuesta || !respuesta.ok) {
+                  fallo(aviso, respuesta);
+                  return;
+                }
+                cargar('Usuario eliminado.');
+              })
+              .withFailureHandler(function () {
+                mostrarAviso(aviso, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+              })
+              .eliminarUsuario(TOKEN, usuario.email);
+          }
+        });
+      }
+
+      function cargar(mensajeOk) {
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            if (!respuesta || !respuesta.ok) {
+              fallo(aviso, respuesta);
+              return;
+            }
+            usuarios = respuesta.usuarios;
+            actual = respuesta.actual;
+            mostrarAviso(aviso, mensajeOk || '', 'ok');
+            pintar();
+          })
+          .withFailureHandler(function () {
+            mostrarAviso(aviso, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+          })
+          .listarUsuarios(TOKEN);
+      }
+
+      cargar('');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>HAPPYREVIEW</title>
+  <script src="config.js"></script>
+  <style>
+  :root {
+    --tinta: #0f1b2d;
+    --tinta-suave: #1e3050;
+    --texto: #0f1b2d;
+    --texto-2: #3a475a;
+    --apagado: #5b6677;
+    --papel: #f3f5f7;
+    --superficie: #ffffff;
+    --linea: #dde2e8;
+    --linea-fuerte: #b9c2ce;
+    --sol: #ffc21f;
+    --sol-fuerte: #e59f00;
+    --sol-suave: #fff1c2;
+    --pos: #0e7a4f;
+    --pos-suave: #dcf2e6;
+    --neg: #b8344a;
+    --neg-suave: #fbe2e6;
+    --info: #1c5fb8;
+    --info-suave: #e0ecfb;
+    --fuente: ui-rounded, "SF Pro Rounded", "Nunito", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  h1, h2, h3, p { margin: 0; }
+  h1 { font-size: 1.75rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 1.25rem; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; }
+  a { color: var(--info); }
+  :focus-visible { outline: 3px solid var(--info); outline-offset: 2px; }
+
+  /* ---------- Botones ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, transform .1s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled, .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  .btn-primario { background: var(--tinta); color: #fff; }
+  .btn-primario:hover:not(:disabled) { background: var(--tinta-suave); }
+  .btn-secundario { background: var(--superficie); color: var(--texto); border-color: var(--linea-fuerte); }
+  .btn-secundario:hover:not(:disabled) { border-color: var(--tinta); }
+  .btn-sol { background: var(--sol); color: var(--tinta); }
+  .btn-sol:hover:not(:disabled) { background: #ffb300; }
+  .btn-barra { min-height: 36px; padding: 0 14px; color: #fff; border-color: rgba(255, 255, 255, .35); background: transparent; }
+  .btn-barra:hover { background: rgba(255, 255, 255, .12); }
+  .btn-pequeno { min-height: 34px; padding: 0 12px; font-size: .9rem; }
+  .btn-peligro { background: #fff; color: var(--neg); border-color: var(--neg); }
+  .btn-peligro:hover:not(:disabled) { background: var(--neg); color: #fff; }
+  .btn-peligro-solido { background: var(--neg); color: #fff; }
+  .btn-peligro-solido:hover:not(:disabled) { background: #8d2335; }
+  .btn-bloque { width: 100%; }
+  .btn-grande { min-height: 56px; font-size: 1.1rem; border-radius: 14px; }
+
+  /* ---------- Formularios ---------- */
+  .campo { display: grid; gap: 6px; margin-bottom: 16px; }
+  .campo label, .campo .etiqueta-campo { font-size: .9rem; font-weight: 700; color: var(--texto-2); }
+  .campo input[type="text"],
+  .campo input[type="email"],
+  .campo input[type="url"],
+  .campo input[type="password"],
+  .campo textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+  }
+  .campo select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+  }
+  .campo textarea { min-height: 120px; resize: vertical; }
+  .campo input:focus, .campo textarea:focus, .campo select:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px var(--info-suave); }
+  .campo input[readonly] { background: var(--papel); }
+  .ayuda { font-size: .85rem; color: var(--apagado); }
+  .casilla { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: .95rem; }
+  .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--tinta); flex: none; }
+  .casilla label { font-weight: 600; color: var(--texto-2); }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* ---------- Avisos ---------- */
+  .aviso { padding: 10px 14px; border-radius: 10px; font-size: .95rem; font-weight: 600; margin-bottom: 16px; }
+  .aviso-ok { background: var(--pos-suave); color: #0a5a3a; }
+  .aviso-error { background: var(--neg-suave); color: #8d2335; }
+  .aviso-info { background: var(--info-suave); color: #164a91; }
+
+  /* ---------- Marca ---------- */
+  .marca { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .01em; color: inherit; text-decoration: none; }
+  .marca-icono {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--sol);
+    color: var(--tinta);
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  /* ---------- Cara (lo memorable de la marca) ---------- */
+  .cara { display: block; width: 120px; height: 120px; }
+  .cara-fondo { fill: var(--sol); stroke: var(--tinta); stroke-width: 4; }
+  .cara-ojo { fill: var(--tinta); }
+  .cara-boca { fill: none; stroke: var(--tinta); stroke-width: 6; stroke-linecap: round; }
+  .cara-brinco { animation: brinco .35s ease-out; }
+  @keyframes brinco {
+    0% { transform: scale(.9) rotate(-4deg); }
+    60% { transform: scale(1.06) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* ---------- Acceso ---------- */
+  .acceso { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); }
+  .acceso-lado {
+    background: var(--sol);
+    color: var(--tinta);
+    padding: 20px 20px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 16px;
+  }
+  .acceso-lado .marca { grid-column: 1 / -1; }
+  .acceso-lado .marca-icono { background: var(--tinta); color: var(--sol); }
+  .acceso-lado .cara { width: 64px; height: 64px; }
+  .acceso-lado .cara-fondo { fill: #ffd34f; }
+  .acceso-titulo { font-size: 1.15rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; }
+  .acceso-texto { display: none; }
+  .acceso-contenido { display: grid; place-items: center; padding: 28px 20px 40px; }
+  .acceso-form { width: 100%; max-width: 380px; }
+  .acceso-form h1 { margin-bottom: 6px; }
+  .acceso-form .sub { color: var(--apagado); margin-bottom: 24px; }
+  .enlace-panel { margin-top: 14px; font-size: .95rem; }
+
+  @media (min-width: 860px) {
+    .acceso { grid-template-columns: minmax(340px, 5fr) 6fr; }
+    .acceso-lado {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: space-between;
+      justify-items: start;
+      padding: 48px;
+      gap: 32px;
+    }
+    .acceso-lado .cara { width: 200px; height: 200px; }
+    .acceso-titulo { font-size: 2.4rem; line-height: 1.05; letter-spacing: -0.03em; max-width: 12ch; }
+    .acceso-texto { display: block; margin-top: 14px; max-width: 34ch; font-size: 1.05rem; color: #3b2f00; }
+  }
+
+  /* ---------- Panel de administración ---------- */
+  .barra { background: var(--tinta); color: #fff; }
+  .barra-in {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+  }
+  .barra .marca-icono { width: 28px; height: 28px; }
+  .nav { display: flex; gap: 4px; flex: 1; }
+  .nav a {
+    color: #cdd7e6;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-bottom: 3px solid transparent;
+  }
+  .nav a:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+  .nav a[aria-current="page"] { color: #fff; border-bottom-color: var(--sol); border-radius: 8px 8px 0 0; }
+  .barra-usuario { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: #cdd7e6; }
+  .barra-usuario span { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .contenedor { max-width: 1120px; margin: 0 auto; padding: 24px 16px 56px; }
+  .cabecera-pagina { margin-bottom: 20px; }
+  .cabecera-pagina p { color: var(--apagado); margin-top: 4px; }
+
+  .panel { background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; padding: 20px; }
+  .panel-titulo { margin-bottom: 14px; }
+
+  /* ---------- Marcador del dashboard ---------- */
+  .marcador { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--superficie); border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; }
+  .marcador-media {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--animo, var(--sol));
+    transition: background-color .4s;
+  }
+  .marcador-media .cara { width: 96px; height: 96px; flex: none; }
+  .media-numero { font-size: 3.75rem; line-height: 1; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .media-numero small { font-size: 1.1rem; font-weight: 700; letter-spacing: 0; margin-left: 4px; color: var(--texto-2); }
+  .media-etiqueta { font-weight: 700; margin-top: 6px; color: var(--texto-2); }
+  .datos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .dato { padding: 18px 20px; border-top: 1px solid var(--linea); }
+  .dato:nth-child(even) { border-left: 1px solid var(--linea); }
+  .dato-etiqueta { font-size: .9rem; font-weight: 700; color: var(--apagado); }
+  .dato-valor { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .dato-detalle { font-size: .85rem; color: var(--apagado); }
+  .dato-pos .dato-valor { color: var(--pos); }
+  .dato-neg .dato-valor { color: var(--neg); }
+  .reparto { grid-column: 1 / -1; padding: 16px 20px 18px; border-top: 1px solid var(--linea); }
+  .reparto-barra { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--linea); margin-top: 8px; }
+  .reparto-pos { background: var(--pos); transition: width .5s; }
+  .reparto-neg { background: var(--neg); transition: width .5s; }
+
+  @media (min-width: 820px) {
+    .marcador { grid-template-columns: minmax(300px, 4fr) 7fr; }
+    .marcador-media { padding: 32px; }
+    .datos { border-left: 1px solid var(--linea); }
+    .dato:nth-child(-n+2) { border-top: 0; }
+  }
+
+  /* ---------- Tablas ---------- */
+  .tabla-caja { overflow-x: auto; border: 1px solid var(--linea); border-radius: 12px; background: var(--superficie); }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th { text-align: left; font-size: .85rem; font-weight: 700; color: var(--apagado); background: #f8f9fb; padding: 10px 14px; border-bottom: 1px solid var(--linea); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.nowrap { white-space: nowrap; }
+  td .secundario { display: block; color: var(--apagado); font-size: .85rem; }
+  .comentario { max-width: 46ch; white-space: pre-line; overflow-wrap: anywhere; }
+  .vacio { padding: 28px 16px; text-align: center; color: var(--apagado); }
+  .estrellas-texto { color: var(--sol-fuerte); letter-spacing: 2px; white-space: nowrap; font-size: 1.05rem; }
+  .estrellas-texto .apagada { color: var(--linea-fuerte); }
+  .etiqueta { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+  .etiqueta-pos { background: var(--pos-suave); color: #0a5a3a; }
+  .etiqueta-neg { background: var(--neg-suave); color: #8d2335; }
+  .etiqueta-info { background: var(--info-suave); color: #164a91; }
+  .etiqueta-sol { background: var(--sol-suave); color: #6b4a00; }
+  .etiqueta-apagada { background: var(--papel); color: var(--apagado); border: 1px solid var(--linea); }
+  .enlace-corto { display: inline-block; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+  .celda-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .bloque { margin-top: 28px; }
+  .bloque > h2 { margin-bottom: 12px; }
+
+  details.panel summary { cursor: pointer; font-weight: 800; font-size: 1.05rem; }
+  details.panel[open] summary { margin-bottom: 16px; }
+  .form-estrecho { max-width: 380px; }
+
+  /* ---------- Empresas ---------- */
+  .dos-columnas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (min-width: 980px) {
+    .dos-columnas { grid-template-columns: 340px minmax(0, 1fr); }
+    .dos-columnas .panel { position: sticky; top: 16px; }
+  }
+  .editando { border-color: var(--sol-fuerte); box-shadow: 0 0 0 3px var(--sol-suave); }
+  .lista-titulo { margin-bottom: 12px; }
+
+  .velo {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(15, 27, 45, .62);
+    overflow-y: auto;
+  }
+  .ventana { width: 100%; max-width: 440px; background: var(--superficie); border-radius: 18px; padding: 24px; }
+  .ventana h2 { margin-bottom: 4px; overflow-wrap: anywhere; }
+  .ventana .ayuda { margin-bottom: 16px; }
+  .qr-marco { display: grid; place-items: center; padding: 12px; margin-bottom: 16px; border: 1px solid var(--linea); border-radius: 12px; background: #fff; }
+  .qr-marco canvas { width: 100%; max-width: 280px; height: auto; image-rendering: pixelated; }
+  .ventana .acciones { margin-top: 4px; }
+  .ventana-ancha { max-width: 560px; }
+  .campo-fila { display: flex; gap: 8px; align-items: stretch; }
+  .campo-fila input { flex: 1 1 auto; min-width: 0; }
+  .clave-nueva {
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    border: 2px dashed var(--sol-fuerte);
+    border-radius: 12px;
+    background: var(--sol-suave);
+  }
+  .clave-nueva p { font-size: .9rem; color: var(--texto-2); }
+  .clave-nueva strong {
+    display: block;
+    margin: 4px 0 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.35rem;
+    letter-spacing: .04em;
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+  .separador { margin: 18px 0; border: 0; border-top: 1px solid var(--linea); }
+  .tarjeta-acceso { display: grid; gap: 4px; margin-bottom: 16px; }
+  .detalle-fila { font-size: .9rem; color: var(--texto-2); margin-bottom: 12px; overflow-wrap: anywhere; }
+  .detalle-fila strong { color: var(--texto); }
+
+  /* ---------- Pantalla del cliente (QR) ---------- */
+  .cliente {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--animo, #ffd34f);
+    transition: background-color .45s ease;
+  }
+  .cliente-columna { width: 100%; max-width: 520px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; }
+  .cliente-cabecera { padding: 32px 20px 24px; display: grid; justify-items: center; gap: 14px; text-align: center; }
+  .cliente-cabecera .cara { width: 132px; height: 132px; }
+  .cliente-empresa { font-size: 1.1rem; font-weight: 800; color: var(--tinta); overflow-wrap: anywhere; }
+  .hoja {
+    flex: 1;
+    background: var(--superficie);
+    border-radius: 28px 28px 0 0;
+    padding: 28px 20px 40px;
+    text-align: center;
+  }
+  .hoja h1 { margin-bottom: 18px; font-size: 1.6rem; }
+  .hoja .sub { color: var(--texto-2); margin: -6px auto 20px; max-width: 36ch; }
+
+  .estrellas { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+  .estrella {
+    padding: 4px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+    border-radius: 12px;
+    transition: transform .12s;
+  }
+  .estrella:hover:not(:disabled) { transform: scale(1.12); }
+  .estrella:active:not(:disabled) { transform: scale(.94); }
+  .estrella:disabled { cursor: default; }
+  .estrella svg { width: 52px; height: 52px; }
+  .estrella polygon { fill: #e3e7ec; stroke: #e3e7ec; stroke-width: 2.4; stroke-linejoin: round; transition: fill .15s, stroke .15s; }
+  .estrella.activa polygon { fill: var(--sol); stroke: var(--sol); }
+  .animo-texto { min-height: 30px; font-size: 1.15rem; font-weight: 800; color: var(--texto-2); margin-bottom: 8px; }
+
+  .formulario-privado { text-align: left; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--linea); }
+  .formulario-privado h2 { margin-bottom: 4px; }
+  .formulario-privado .sub { text-align: left; margin: 0 0 16px; max-width: none; }
+  .contador { text-align: right; font-size: .8rem; color: var(--apagado); }
+
+  .resultado { padding-top: 4px; }
+  .resultado h1 { margin-bottom: 10px; }
+  .resultado p { color: var(--texto-2); margin: 0 auto 24px; max-width: 34ch; }
+  .resultado .btn { width: 100%; }
+
+  @media (min-width: 560px) {
+    .cliente { justify-content: center; }
+    .cliente-columna { flex: none; }
+    .hoja { border-radius: 28px; margin-bottom: 40px; padding-bottom: 36px; flex: none; }
+  }
+
+  @media (max-width: 380px) {
+    .estrella svg { width: 46px; height: 46px; }
+    .datos { grid-template-columns: minmax(0, 1fr); }
+    .dato:nth-child(even) { border-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+  <script>
+  /**
+   * Ayudante común de todas las páginas.
+   *
+   * En la aplicación de Apps Script no hace casi nada: google.script.run ya existe y el
+   * servidor entrega los datos de la página en APP. En la web estática (GitHub Pages) APP
+   * llega como {"modo":"web"}: aquí se crea google.script.run, que llama a la aplicación
+   * de Apps Script con un POST de texto plano (así el navegador no necesita preflight
+   * CORS), y se piden los datos de la página que en Apps Script inyecta el servidor.
+   */
+  window.HR = (function () {
+    const TIEMPO_MAXIMO_MS = 45000;
+
+    function baseWeb() {
+      return location.origin + location.pathname.replace(/[^\/]*$/, '');
+    }
+
+    function mensajeFatal(texto) {
+      document.body.textContent = '';
+      const parrafo = document.createElement('p');
+      parrafo.style.cssText = 'max-width:34rem;margin:3rem auto;padding:0 1rem;font:16px/1.5 system-ui,sans-serif;color:#0f1b2d';
+      parrafo.textContent = texto;
+      document.body.appendChild(parrafo);
+    }
+
+    function instalarApi(apiUrl, origen) {
+      function crear(exito, fallo) {
+        return new Proxy({}, {
+          get: function (destino, nombre) {
+            if (nombre === 'withSuccessHandler') {
+              return function (funcion) { return crear(funcion, fallo); };
+            }
+            if (nombre === 'withFailureHandler') {
+              return function (funcion) { return crear(exito, funcion); };
+            }
+            if (typeof nombre !== 'string') {
+              return undefined;
+            }
+            return function () {
+              const argumentos = Array.prototype.slice.call(arguments);
+              const control = typeof AbortController === 'function' ? new AbortController() : null;
+              const reloj = control ? setTimeout(function () { control.abort(); }, TIEMPO_MAXIMO_MS) : null;
+
+              fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ fn: nombre, args: argumentos, origen: origen }),
+                redirect: 'follow',
+                signal: control ? control.signal : undefined
+              })
+                .then(function (respuesta) {
+                  if (!respuesta.ok) {
+                    throw new Error('HTTP ' + respuesta.status);
+                  }
+                  return respuesta.json();
+                })
+                .then(
+                  function (json) { return { json: json, error: null }; },
+                  function (error) { return { json: null, error: error }; }
+                )
+                .then(function (salida) {
+                  if (reloj) {
+                    clearTimeout(reloj);
+                  }
+                  if (salida.error || !salida.json || salida.json.error) {
+                    if (fallo) {
+                      fallo(salida.error || new Error(salida.json && salida.json.error ? salida.json.error : 'Respuesta no válida'));
+                    }
+                  } else if (exito) {
+                    exito(salida.json.resultado);
+                  }
+                });
+            };
+          }
+        });
+      }
+      window.google = { script: { run: crear(null, null) } };
+    }
+
+    /**
+     * Prepara la página y llama a listo() cuando APP ya está completo.
+     * Si el servidor responde con otra página (por ejemplo el login porque caducó la
+     * sesión), redirige a ella.
+     */
+    function preparar(APP, pagina, listo) {
+      if (APP.modo !== 'web') {
+        listo();
+        return;
+      }
+
+      const configuracion = window.HAPPYREVIEW_CONFIG || {};
+      const apiUrl = String(configuracion.apiUrl || '');
+      const valida = /^https:\/\/script\.google\.com\/[^\s?#]+\/exec$/.test(apiUrl)
+        || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(apiUrl);
+      if (!valida) {
+        mensajeFatal('Falta configurar la web: abre el archivo config.js y pega en apiUrl la dirección de la aplicación de Apps Script (la que termina en /exec).');
+        return;
+      }
+
+      // Hasta que la página esté lista no hay manejadores: sin esto, un formulario enviado
+      // demasiado pronto se enviaría por la URL (con la contraseña a la vista).
+      let preparada = false;
+      document.addEventListener('submit', function (evento) {
+        if (!preparada) {
+          evento.preventDefault();
+        }
+      }, true);
+
+      const base = baseWeb();
+      instalarApi(apiUrl, base);
+
+      const consulta = new URLSearchParams(location.search);
+      const parametros = {};
+      ['e', 'c', 'token', 'salir', 'aviso'].forEach(function (clave) {
+        if (consulta.has(clave)) {
+          parametros[clave] = consulta.get(clave);
+        }
+      });
+
+      window.google.script.run
+        .withSuccessHandler(function (respuesta) {
+          if (!respuesta || !respuesta.ok) {
+            mensajeFatal(respuesta && respuesta.mensaje ? respuesta.mensaje : 'No se pudo cargar la página. Inténtalo de nuevo en unos segundos.');
+            return;
+          }
+          if (respuesta.pagina !== pagina) {
+            let destino = base + '?page=' + respuesta.pagina;
+            if (respuesta.pagina === 'login' && respuesta.datos && respuesta.datos.tipo === 'info') {
+              destino += '&aviso=caducada';
+            }
+            location.replace(destino);
+            return;
+          }
+          Object.assign(APP, respuesta.datos, { baseUrl: base });
+          if (respuesta.titulo) {
+            document.title = respuesta.titulo;
+          }
+          preparada = true;
+          listo();
+        })
+        .withFailureHandler(function () {
+          mensajeFatal('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo en unos segundos.');
+        })
+        .obtenerDatosPagina(pagina, parametros);
+    }
+
+    /**
+     * Ventana de confirmación dentro de la página (los diálogos del navegador no están
+     * disponibles dentro de Apps Script). opciones: { titulo, texto, boton, alAceptar }.
+     */
+    function confirmar(opciones) {
+      const velo = document.createElement('div');
+      velo.className = 'velo';
+      const ventana = document.createElement('div');
+      ventana.className = 'ventana';
+      ventana.setAttribute('role', 'alertdialog');
+      ventana.setAttribute('aria-modal', 'true');
+
+      const titulo = document.createElement('h2');
+      titulo.textContent = opciones.titulo;
+      const texto = document.createElement('p');
+      texto.className = 'ayuda';
+      texto.textContent = opciones.texto;
+      const acciones = document.createElement('div');
+      acciones.className = 'acciones';
+
+      const aceptar = document.createElement('button');
+      aceptar.type = 'button';
+      aceptar.className = 'btn btn-peligro-solido';
+      aceptar.textContent = opciones.boton || 'Eliminar';
+      const cancelar = document.createElement('button');
+      cancelar.type = 'button';
+      cancelar.className = 'btn btn-secundario';
+      cancelar.textContent = 'Cancelar';
+
+      function cerrar() {
+        document.removeEventListener('keydown', alTeclear);
+        if (velo.parentNode) {
+          velo.parentNode.removeChild(velo);
+        }
+      }
+      function alTeclear(evento) {
+        if (evento.key === 'Escape') {
+          cerrar();
+        }
+      }
+
+      aceptar.addEventListener('click', function () {
+        cerrar();
+        opciones.alAceptar();
+      });
+      cancelar.addEventListener('click', cerrar);
+      velo.addEventListener('click', function (evento) {
+        if (evento.target === velo) {
+          cerrar();
+        }
+      });
+      document.addEventListener('keydown', alTeclear);
+
+      acciones.appendChild(aceptar);
+      acciones.appendChild(cancelar);
+      ventana.appendChild(titulo);
+      ventana.appendChild(texto);
+      ventana.appendChild(acciones);
+      velo.appendChild(ventana);
+      document.body.appendChild(velo);
+      cancelar.focus();
+    }
+
+    /** Copia un texto al portapapeles; devuelve true si lo consiguió. */
+    function copiar(texto, campoAuxiliar) {
+      try {
+        if (campoAuxiliar) {
+          campoAuxiliar.focus();
+          campoAuxiliar.select();
+          return document.execCommand('copy');
+        }
+        const area = document.createElement('textarea');
+        area.value = texto;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        const copiado = document.execCommand('copy');
+        document.body.removeChild(area);
+        return copiado;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    return { preparar: preparar, confirmar: confirmar, copiar: copiar, baseWeb: baseWeb };
+  })();
+</script>
+</head>
+<body class="cliente" id="cuerpo">
+  <main class="cliente-columna">
+    <header class="cliente-cabecera">
+      <svg class="cara" id="cara" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="cara-fondo" cx="60" cy="60" r="56"></circle>
+        <ellipse class="cara-ojo" cx="42" cy="50" rx="6" ry="8"></ellipse>
+        <ellipse class="cara-ojo" cx="78" cy="50" rx="6" ry="8"></ellipse>
+        <path class="cara-boca" id="cara-boca" d="M 36 74 Q 60 102 84 74"></path>
+      </svg>
+      <p class="cliente-empresa" id="empresa-nombre" hidden></p>
+    </header>
+
+    <section class="hoja">
+      <div id="vista-valorar" hidden>
+        <h1>¿Qué tal ha sido tu experiencia?</h1>
+        <div class="estrellas" id="estrellas" role="group" aria-label="Tu valoración de 1 a 5 estrellas"></div>
+        <p class="animo-texto" id="animo-texto" aria-live="polite">Toca una estrella</p>
+        <div id="aviso" class="aviso" role="alert" hidden></div>
+
+        <form class="formulario-privado" id="formulario-privado" novalidate hidden>
+          <h2>Cuéntanos qué ha pasado</h2>
+          <p class="sub" id="texto-privacidad"></p>
+          <div class="campo">
+            <label for="comentario">Tu comentario</label>
+            <textarea id="comentario" maxlength="1000" required></textarea>
+            <span class="contador" id="contador">0 / 1000</span>
+          </div>
+          <div class="campo">
+            <label for="email">Tu email (opcional)</label>
+            <input id="email" type="email" maxlength="254" autocomplete="email" inputmode="email">
+            <span class="ayuda">Solo lo usaremos si quieres que te respondan.</span>
+          </div>
+          <button id="btn-enviar" class="btn btn-primario btn-bloque" type="submit">Enviar comentario</button>
+        </form>
+      </div>
+
+      <div id="vista-positiva" class="resultado" hidden>
+        <h1>¡Gracias por tu valoración!</h1>
+        <p id="texto-positiva">Nos alegra que lo hayas pasado bien.</p>
+        <a id="btn-google" class="btn btn-sol btn-grande" href="#" target="_blank" rel="noopener noreferrer" hidden>Dejar reseña en Google</a>
+      </div>
+
+      <div id="vista-privada" class="resultado" hidden>
+        <h1>Gracias por contárnoslo</h1>
+        <p id="texto-privada">Tu comentario ya está en manos del equipo. Lo leerán para mejorar.</p>
+      </div>
+
+      <div id="vista-ya-valorado" class="resultado" hidden>
+        <h1>Ya nos has valorado</h1>
+        <p id="texto-ya-valorado">Gracias por tu opinión. Solo se puede valorar una vez cada cierto tiempo.</p>
+      </div>
+
+      <div id="vista-no-disponible" class="resultado" hidden>
+        <h1>Este enlace no está disponible</h1>
+        <p id="texto-no-disponible">Puede que el código QR haya cambiado o que la empresa ya no reciba valoraciones.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const APP = {"modo":"web"};
+
+    HR.preparar(APP, 'valoracion', function () {
+      const ETIQUETAS = ['Muy mala', 'Mala', 'Regular', 'Buena', 'Excelente'];
+      const COLORES_ANIMO = ['#b9c6da', '#cfd3da', '#ebdda9', '#ffd863', '#ffc21f'];
+      const ESPACIO_SVG = 'http://www.w3.org/2000/svg';
+      const PUNTOS_ESTRELLA = '12,2.5 14.9,8.6 21.5,9.4 16.6,14 17.9,20.6 12,17.3 6.1,20.6 7.4,14 2.5,9.4 9.1,8.6';
+
+      const cuerpo = document.getElementById('cuerpo');
+      const cara = document.getElementById('cara');
+      const contenedorEstrellas = document.getElementById('estrellas');
+      const animoTexto = document.getElementById('animo-texto');
+      const aviso = document.getElementById('aviso');
+      const formulario = document.getElementById('formulario-privado');
+      const campoComentario = document.getElementById('comentario');
+      const campoEmail = document.getElementById('email');
+      const contador = document.getElementById('contador');
+      const botonEnviar = document.getElementById('btn-enviar');
+      const botonesEstrella = [];
+
+      /** Identificador aleatorio que se guarda en este navegador: permite un voto por cliente. */
+      function crearClienteId() {
+        const letras = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let id = '';
+        try {
+          const bytes = new Uint8Array(24);
+          window.crypto.getRandomValues(bytes);
+          bytes.forEach(function (valor) { id += letras.charAt(valor % letras.length); });
+        } catch (error) {
+          for (let i = 0; i < 24; i++) { id += letras.charAt(Math.floor(Math.random() * letras.length)); }
+        }
+        return id;
+      }
+
+      const CLIENTE_ID = (function () {
+        try {
+          let guardado = window.localStorage.getItem('hr_cliente');
+          if (!/^[A-Za-z0-9_-]{16,64}$/.test(guardado || '')) {
+            guardado = crearClienteId();
+            window.localStorage.setItem('hr_cliente', guardado);
+          }
+          return guardado;
+        } catch (error) {
+          return crearClienteId();
+        }
+      })();
+
+      let valorElegido = 0;
+      let ocupado = false;
+      let terminado = false;
+
+      function mostrarVista(nombre) {
+        ['vista-valorar', 'vista-positiva', 'vista-privada', 'vista-ya-valorado', 'vista-no-disponible'].forEach(function (id) {
+          document.getElementById(id).hidden = id !== nombre;
+        });
+      }
+
+      function mostrarAviso(texto) {
+        aviso.textContent = texto;
+        aviso.className = 'aviso aviso-error';
+        aviso.hidden = !texto;
+      }
+
+      function dibujarCara(animo) {
+        const y0 = 88 - 14 * animo;
+        const yc = y0 + (animo - 0.5) * 56;
+        document.getElementById('cara-boca').setAttribute('d', 'M 36 ' + y0.toFixed(1) + ' Q 60 ' + yc.toFixed(1) + ' 84 ' + y0.toFixed(1));
+      }
+
+      function animarCara() {
+        cara.classList.remove('cara-brinco');
+        void cara.getBoundingClientRect();
+        cara.classList.add('cara-brinco');
+      }
+
+      function esHttps(url) {
+        return /^https:\/\//i.test(String(url));
+      }
+
+      /* ---------- Estrellas ---------- */
+      function pintarEstrellas(hasta) {
+        botonesEstrella.forEach(function (boton, indice) {
+          boton.classList.toggle('activa', indice < hasta);
+          boton.setAttribute('aria-pressed', String(indice + 1 === valorElegido));
+        });
+      }
+
+      function bloquearEstrellas(bloqueado) {
+        botonesEstrella.forEach(function (boton) {
+          boton.disabled = bloqueado;
+        });
+      }
+
+      function crearEstrellas() {
+        for (let valor = 1; valor <= 5; valor++) {
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'estrella';
+          boton.setAttribute('aria-label', valor + (valor === 1 ? ' estrella' : ' estrellas') + ': ' + ETIQUETAS[valor - 1]);
+          boton.setAttribute('aria-pressed', 'false');
+
+          const svg = document.createElementNS(ESPACIO_SVG, 'svg');
+          svg.setAttribute('viewBox', '0 0 24 24');
+          svg.setAttribute('aria-hidden', 'true');
+          const poligono = document.createElementNS(ESPACIO_SVG, 'polygon');
+          poligono.setAttribute('points', PUNTOS_ESTRELLA);
+          svg.appendChild(poligono);
+          boton.appendChild(svg);
+
+          boton.addEventListener('mouseenter', function () {
+            if (!ocupado && !terminado) {
+              pintarEstrellas(valor);
+            }
+          });
+          boton.addEventListener('mouseleave', function () {
+            pintarEstrellas(valorElegido);
+          });
+          boton.addEventListener('click', function () {
+            elegir(valor);
+          });
+
+          botonesEstrella.push(boton);
+          contenedorEstrellas.appendChild(boton);
+        }
+      }
+
+      function elegir(valor) {
+        if (ocupado || terminado) {
+          return;
+        }
+        valorElegido = valor;
+        pintarEstrellas(valor);
+        mostrarAviso('');
+        animoTexto.textContent = ETIQUETAS[valor - 1];
+        dibujarCara((valor - 1) / 4);
+        cuerpo.style.setProperty('--animo', COLORES_ANIMO[valor - 1]);
+        animarCara();
+
+        if (valor >= 4) {
+          formulario.hidden = true;
+          enviar(valor, '', '');
+        } else {
+          formulario.hidden = false;
+          formulario.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
+      /* ---------- Envío ---------- */
+      function enviar(valor, comentario, email) {
+        ocupado = true;
+        bloquearEstrellas(true);
+        botonEnviar.disabled = true;
+        const textoAnterior = animoTexto.textContent;
+        if (valor >= 4) {
+          animoTexto.textContent = 'Guardando…';
+        }
+
+        function liberar(mensaje) {
+          ocupado = false;
+          bloquearEstrellas(false);
+          botonEnviar.disabled = false;
+          animoTexto.textContent = textoAnterior;
+          mostrarAviso(mensaje);
+        }
+
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            if (respuesta && respuesta.codigo === 'YA_VALORADO') {
+              ocupado = false;
+              terminado = true;
+              mostrarVista('vista-ya-valorado');
+              return;
+            }
+            if (!respuesta || !respuesta.ok) {
+              liberar(respuesta && respuesta.mensaje ? respuesta.mensaje : 'No se pudo guardar tu valoración. Inténtalo de nuevo.');
+              return;
+            }
+            ocupado = false;
+            terminado = true;
+            if (respuesta.positiva) {
+              mostrarPositiva(respuesta.googleUrl, respuesta.valoracionId);
+            } else {
+              mostrarVista('vista-privada');
+              document.getElementById('texto-privada').textContent = APP.empresaNombre
+                ? 'Tu comentario ya está en manos del equipo de ' + APP.empresaNombre + '. Lo leerán para mejorar.'
+                : 'Tu comentario ya está en manos del equipo. Lo leerán para mejorar.';
+            }
+          })
+          .withFailureHandler(function () {
+            liberar('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.');
+          })
+          .registrarValoracion(APP.empresaId, valor, comentario, email, CLIENTE_ID);
+      }
+
+      let valoracionGuardada = '';
+
+      function mostrarPositiva(googleUrl, valoracionId) {
+        valoracionGuardada = String(valoracionId || '');
+        mostrarVista('vista-positiva');
+        const boton = document.getElementById('btn-google');
+        const texto = document.getElementById('texto-positiva');
+        if (esHttps(googleUrl)) {
+          boton.href = googleUrl;
+          boton.hidden = false;
+          texto.textContent = 'Nos alegra que lo hayas pasado bien. ¿Nos ayudas con una reseña en Google? Solo te llevará un minuto.';
+        } else {
+          boton.hidden = true;
+          texto.textContent = 'Nos alegra que lo hayas pasado bien. Esperamos verte pronto.';
+        }
+      }
+
+      document.getElementById('btn-google').addEventListener('click', function () {
+        if (valoracionGuardada) {
+          google.script.run
+            .withSuccessHandler(function () {})
+            .withFailureHandler(function () {})
+            .registrarClicGoogle(APP.empresaId, valoracionGuardada);
+        }
+      });
+
+      /** Si este cliente ya valoró hace poco, se lo decimos antes de pedirle nada. */
+      function comprobarYa() {
+        mostrarVista('vista-valorar');
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            if (respuesta && respuesta.ok && respuesta.yaValorado && !terminado) {
+              terminado = true;
+              mostrarVista('vista-ya-valorado');
+            }
+          })
+          .withFailureHandler(function () {})
+          .comprobarVoto(APP.empresaId, CLIENTE_ID);
+      }
+
+      formulario.addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const comentario = campoComentario.value.trim();
+        if (comentario.length < 3) {
+          mostrarAviso('Cuéntanos qué ha pasado para que podamos mejorar.');
+          campoComentario.focus();
+          return;
+        }
+        if (!valorElegido) {
+          mostrarAviso('Elige primero una valoración con las estrellas.');
+          return;
+        }
+        mostrarAviso('');
+        enviar(valorElegido, comentario, campoEmail.value.trim());
+      });
+
+      campoComentario.addEventListener('input', function () {
+        contador.textContent = campoComentario.value.length + ' / 1000';
+      });
+
+      /* ---------- Arranque ---------- */
+      if (!APP.disponible) {
+        dibujarCara(0.5);
+        cuerpo.style.setProperty('--animo', '#dcdfe5');
+        if (APP.mensaje) {
+          document.getElementById('texto-no-disponible').textContent = APP.mensaje;
+        }
+        mostrarVista('vista-no-disponible');
+        return;
+      }
+
+      const etiquetaEmpresa = document.getElementById('empresa-nombre');
+      etiquetaEmpresa.textContent = APP.empresaNombre;
+      etiquetaEmpresa.hidden = false;
+      document.getElementById('texto-privacidad').textContent =
+        'Tu comentario es privado: solo lo verá el equipo de ' + APP.empresaNombre + ' y no se publica en Google.';
+      dibujarCara(0.75);
+      crearEstrellas();
+      comprobarYa();
+    });
+  </script>
+</body>
+</html>

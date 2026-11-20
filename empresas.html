@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>HAPPYREVIEW</title>
+  <script src="config.js"></script>
+  <style>
+  :root {
+    --tinta: #0f1b2d;
+    --tinta-suave: #1e3050;
+    --texto: #0f1b2d;
+    --texto-2: #3a475a;
+    --apagado: #5b6677;
+    --papel: #f3f5f7;
+    --superficie: #ffffff;
+    --linea: #dde2e8;
+    --linea-fuerte: #b9c2ce;
+    --sol: #ffc21f;
+    --sol-fuerte: #e59f00;
+    --sol-suave: #fff1c2;
+    --pos: #0e7a4f;
+    --pos-suave: #dcf2e6;
+    --neg: #b8344a;
+    --neg-suave: #fbe2e6;
+    --info: #1c5fb8;
+    --info-suave: #e0ecfb;
+    --fuente: ui-rounded, "SF Pro Rounded", "Nunito", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  h1, h2, h3, p { margin: 0; }
+  h1 { font-size: 1.75rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+  h2 { font-size: 1.25rem; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; }
+  a { color: var(--info); }
+  :focus-visible { outline: 3px solid var(--info); outline-offset: 2px; }
+
+  /* ---------- Botones ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, transform .1s;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled, .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  .btn-primario { background: var(--tinta); color: #fff; }
+  .btn-primario:hover:not(:disabled) { background: var(--tinta-suave); }
+  .btn-secundario { background: var(--superficie); color: var(--texto); border-color: var(--linea-fuerte); }
+  .btn-secundario:hover:not(:disabled) { border-color: var(--tinta); }
+  .btn-sol { background: var(--sol); color: var(--tinta); }
+  .btn-sol:hover:not(:disabled) { background: #ffb300; }
+  .btn-barra { min-height: 36px; padding: 0 14px; color: #fff; border-color: rgba(255, 255, 255, .35); background: transparent; }
+  .btn-barra:hover { background: rgba(255, 255, 255, .12); }
+  .btn-pequeno { min-height: 34px; padding: 0 12px; font-size: .9rem; }
+  .btn-peligro { background: #fff; color: var(--neg); border-color: var(--neg); }
+  .btn-peligro:hover:not(:disabled) { background: var(--neg); color: #fff; }
+  .btn-peligro-solido { background: var(--neg); color: #fff; }
+  .btn-peligro-solido:hover:not(:disabled) { background: #8d2335; }
+  .btn-bloque { width: 100%; }
+  .btn-grande { min-height: 56px; font-size: 1.1rem; border-radius: 14px; }
+
+  /* ---------- Formularios ---------- */
+  .campo { display: grid; gap: 6px; margin-bottom: 16px; }
+  .campo label, .campo .etiqueta-campo { font-size: .9rem; font-weight: 700; color: var(--texto-2); }
+  .campo input[type="text"],
+  .campo input[type="email"],
+  .campo input[type="url"],
+  .campo input[type="password"],
+  .campo textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+  }
+  .campo select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--linea-fuerte);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+  }
+  .campo textarea { min-height: 120px; resize: vertical; }
+  .campo input:focus, .campo textarea:focus, .campo select:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px var(--info-suave); }
+  .campo input[readonly] { background: var(--papel); }
+  .ayuda { font-size: .85rem; color: var(--apagado); }
+  .casilla { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: .95rem; }
+  .casilla input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--tinta); flex: none; }
+  .casilla label { font-weight: 600; color: var(--texto-2); }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* ---------- Avisos ---------- */
+  .aviso { padding: 10px 14px; border-radius: 10px; font-size: .95rem; font-weight: 600; margin-bottom: 16px; }
+  .aviso-ok { background: var(--pos-suave); color: #0a5a3a; }
+  .aviso-error { background: var(--neg-suave); color: #8d2335; }
+  .aviso-info { background: var(--info-suave); color: #164a91; }
+
+  /* ---------- Marca ---------- */
+  .marca { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .01em; color: inherit; text-decoration: none; }
+  .marca-icono {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--sol);
+    color: var(--tinta);
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  /* ---------- Cara (lo memorable de la marca) ---------- */
+  .cara { display: block; width: 120px; height: 120px; }
+  .cara-fondo { fill: var(--sol); stroke: var(--tinta); stroke-width: 4; }
+  .cara-ojo { fill: var(--tinta); }
+  .cara-boca { fill: none; stroke: var(--tinta); stroke-width: 6; stroke-linecap: round; }
+  .cara-brinco { animation: brinco .35s ease-out; }
+  @keyframes brinco {
+    0% { transform: scale(.9) rotate(-4deg); }
+    60% { transform: scale(1.06) rotate(2deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* ---------- Acceso ---------- */
+  .acceso { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); }
+  .acceso-lado {
+    background: var(--sol);
+    color: var(--tinta);
+    padding: 20px 20px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 16px;
+  }
+  .acceso-lado .marca { grid-column: 1 / -1; }
+  .acceso-lado .marca-icono { background: var(--tinta); color: var(--sol); }
+  .acceso-lado .cara { width: 64px; height: 64px; }
+  .acceso-lado .cara-fondo { fill: #ffd34f; }
+  .acceso-titulo { font-size: 1.15rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; }
+  .acceso-texto { display: none; }
+  .acceso-contenido { display: grid; place-items: center; padding: 28px 20px 40px; }
+  .acceso-form { width: 100%; max-width: 380px; }
+  .acceso-form h1 { margin-bottom: 6px; }
+  .acceso-form .sub { color: var(--apagado); margin-bottom: 24px; }
+  .enlace-panel { margin-top: 14px; font-size: .95rem; }
+
+  @media (min-width: 860px) {
+    .acceso { grid-template-columns: minmax(340px, 5fr) 6fr; }
+    .acceso-lado {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: space-between;
+      justify-items: start;
+      padding: 48px;
+      gap: 32px;
+    }
+    .acceso-lado .cara { width: 200px; height: 200px; }
+    .acceso-titulo { font-size: 2.4rem; line-height: 1.05; letter-spacing: -0.03em; max-width: 12ch; }
+    .acceso-texto { display: block; margin-top: 14px; max-width: 34ch; font-size: 1.05rem; color: #3b2f00; }
+  }
+
+  /* ---------- Panel de administración ---------- */
+  .barra { background: var(--tinta); color: #fff; }
+  .barra-in {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+  }
+  .barra .marca-icono { width: 28px; height: 28px; }
+  .nav { display: flex; gap: 4px; flex: 1; }
+  .nav a {
+    color: #cdd7e6;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-bottom: 3px solid transparent;
+  }
+  .nav a:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+  .nav a[aria-current="page"] { color: #fff; border-bottom-color: var(--sol); border-radius: 8px 8px 0 0; }
+  .barra-usuario { display: flex; align-items: center; gap: 12px; font-size: .9rem; color: #cdd7e6; }
+  .barra-usuario span { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .contenedor { max-width: 1120px; margin: 0 auto; padding: 24px 16px 56px; }
+  .cabecera-pagina { margin-bottom: 20px; }
+  .cabecera-pagina p { color: var(--apagado); margin-top: 4px; }
+
+  .panel { background: var(--superficie); border: 1px solid var(--linea); border-radius: 14px; padding: 20px; }
+  .panel-titulo { margin-bottom: 14px; }
+
+  /* ---------- Marcador del dashboard ---------- */
+  .marcador { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--superficie); border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; }
+  .marcador-media {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--animo, var(--sol));
+    transition: background-color .4s;
+  }
+  .marcador-media .cara { width: 96px; height: 96px; flex: none; }
+  .media-numero { font-size: 3.75rem; line-height: 1; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .media-numero small { font-size: 1.1rem; font-weight: 700; letter-spacing: 0; margin-left: 4px; color: var(--texto-2); }
+  .media-etiqueta { font-weight: 700; margin-top: 6px; color: var(--texto-2); }
+  .datos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .dato { padding: 18px 20px; border-top: 1px solid var(--linea); }
+  .dato:nth-child(even) { border-left: 1px solid var(--linea); }
+  .dato-etiqueta { font-size: .9rem; font-weight: 700; color: var(--apagado); }
+  .dato-valor { font-size: 2rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .dato-detalle { font-size: .85rem; color: var(--apagado); }
+  .dato-pos .dato-valor { color: var(--pos); }
+  .dato-neg .dato-valor { color: var(--neg); }
+  .reparto { grid-column: 1 / -1; padding: 16px 20px 18px; border-top: 1px solid var(--linea); }
+  .reparto-barra { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--linea); margin-top: 8px; }
+  .reparto-pos { background: var(--pos); transition: width .5s; }
+  .reparto-neg { background: var(--neg); transition: width .5s; }
+
+  @media (min-width: 820px) {
+    .marcador { grid-template-columns: minmax(300px, 4fr) 7fr; }
+    .marcador-media { padding: 32px; }
+    .datos { border-left: 1px solid var(--linea); }
+    .dato:nth-child(-n+2) { border-top: 0; }
+  }
+
+  /* ---------- Tablas ---------- */
+  .tabla-caja { overflow-x: auto; border: 1px solid var(--linea); border-radius: 12px; background: var(--superficie); }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th { text-align: left; font-size: .85rem; font-weight: 700; color: var(--apagado); background: #f8f9fb; padding: 10px 14px; border-bottom: 1px solid var(--linea); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.nowrap { white-space: nowrap; }
+  td .secundario { display: block; color: var(--apagado); font-size: .85rem; }
+  .comentario { max-width: 46ch; white-space: pre-line; overflow-wrap: anywhere; }
+  .vacio { padding: 28px 16px; text-align: center; color: var(--apagado); }
+  .estrellas-texto { color: var(--sol-fuerte); letter-spacing: 2px; white-space: nowrap; font-size: 1.05rem; }
+  .estrellas-texto .apagada { color: var(--linea-fuerte); }
+  .etiqueta { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+  .etiqueta-pos { background: var(--pos-suave); color: #0a5a3a; }
+  .etiqueta-neg { background: var(--neg-suave); color: #8d2335; }
+  .etiqueta-info { background: var(--info-suave); color: #164a91; }
+  .etiqueta-sol { background: var(--sol-suave); color: #6b4a00; }
+  .etiqueta-apagada { background: var(--papel); color: var(--apagado); border: 1px solid var(--linea); }
+  .enlace-corto { display: inline-block; max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+  .celda-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .bloque { margin-top: 28px; }
+  .bloque > h2 { margin-bottom: 12px; }
+
+  details.panel summary { cursor: pointer; font-weight: 800; font-size: 1.05rem; }
+  details.panel[open] summary { margin-bottom: 16px; }
+  .form-estrecho { max-width: 380px; }
+
+  /* ---------- Empresas ---------- */
+  .dos-columnas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (min-width: 980px) {
+    .dos-columnas { grid-template-columns: 340px minmax(0, 1fr); }
+    .dos-columnas .panel { position: sticky; top: 16px; }
+  }
+  .editando { border-color: var(--sol-fuerte); box-shadow: 0 0 0 3px var(--sol-suave); }
+  .lista-titulo { margin-bottom: 12px; }
+
+  .velo {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(15, 27, 45, .62);
+    overflow-y: auto;
+  }
+  .ventana { width: 100%; max-width: 440px; background: var(--superficie); border-radius: 18px; padding: 24px; }
+  .ventana h2 { margin-bottom: 4px; overflow-wrap: anywhere; }
+  .ventana .ayuda { margin-bottom: 16px; }
+  .qr-marco { display: grid; place-items: center; padding: 12px; margin-bottom: 16px; border: 1px solid var(--linea); border-radius: 12px; background: #fff; }
+  .qr-marco canvas { width: 100%; max-width: 280px; height: auto; image-rendering: pixelated; }
+  .ventana .acciones { margin-top: 4px; }
+  .ventana-ancha { max-width: 560px; }
+  .campo-fila { display: flex; gap: 8px; align-items: stretch; }
+  .campo-fila input { flex: 1 1 auto; min-width: 0; }
+  .clave-nueva {
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    border: 2px dashed var(--sol-fuerte);
+    border-radius: 12px;
+    background: var(--sol-suave);
+  }
+  .clave-nueva p { font-size: .9rem; color: var(--texto-2); }
+  .clave-nueva strong {
+    display: block;
+    margin: 4px 0 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.35rem;
+    letter-spacing: .04em;
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+  .separador { margin: 18px 0; border: 0; border-top: 1px solid var(--linea); }
+  .tarjeta-acceso { display: grid; gap: 4px; margin-bottom: 16px; }
+  .detalle-fila { font-size: .9rem; color: var(--texto-2); margin-bottom: 12px; overflow-wrap: anywhere; }
+  .detalle-fila strong { color: var(--texto); }
+
+  /* ---------- Pantalla del cliente (QR) ---------- */
+  .cliente {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--animo, #ffd34f);
+    transition: background-color .45s ease;
+  }
+  .cliente-columna { width: 100%; max-width: 520px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; }
+  .cliente-cabecera { padding: 32px 20px 24px; display: grid; justify-items: center; gap: 14px; text-align: center; }
+  .cliente-cabecera .cara { width: 132px; height: 132px; }
+  .cliente-empresa { font-size: 1.1rem; font-weight: 800; color: var(--tinta); overflow-wrap: anywhere; }
+  .hoja {
+    flex: 1;
+    background: var(--superficie);
+    border-radius: 28px 28px 0 0;
+    padding: 28px 20px 40px;
+    text-align: center;
+  }
+  .hoja h1 { margin-bottom: 18px; font-size: 1.6rem; }
+  .hoja .sub { color: var(--texto-2); margin: -6px auto 20px; max-width: 36ch; }
+
+  .estrellas { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+  .estrella {
+    padding: 4px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+    border-radius: 12px;
+    transition: transform .12s;
+  }
+  .estrella:hover:not(:disabled) { transform: scale(1.12); }
+  .estrella:active:not(:disabled) { transform: scale(.94); }
+  .estrella:disabled { cursor: default; }
+  .estrella svg { width: 52px; height: 52px; }
+  .estrella polygon { fill: #e3e7ec; stroke: #e3e7ec; stroke-width: 2.4; stroke-linejoin: round; transition: fill .15s, stroke .15s; }
+  .estrella.activa polygon { fill: var(--sol); stroke: var(--sol); }
+  .animo-texto { min-height: 30px; font-size: 1.15rem; font-weight: 800; color: var(--texto-2); margin-bottom: 8px; }
+
+  .formulario-privado { text-align: left; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--linea); }
+  .formulario-privado h2 { margin-bottom: 4px; }
+  .formulario-privado .sub { text-align: left; margin: 0 0 16px; max-width: none; }
+  .contador { text-align: right; font-size: .8rem; color: var(--apagado); }
+
+  .resultado { padding-top: 4px; }
+  .resultado h1 { margin-bottom: 10px; }
+  .resultado p { color: var(--texto-2); margin: 0 auto 24px; max-width: 34ch; }
+  .resultado .btn { width: 100%; }
+
+  @media (min-width: 560px) {
+    .cliente { justify-content: center; }
+    .cliente-columna { flex: none; }
+    .hoja { border-radius: 28px; margin-bottom: 40px; padding-bottom: 36px; flex: none; }
+  }
+
+  @media (max-width: 380px) {
+    .estrella svg { width: 46px; height: 46px; }
+    .datos { grid-template-columns: minmax(0, 1fr); }
+    .dato:nth-child(even) { border-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+  <script>
+  /**
+   * Ayudante común de todas las páginas.
+   *
+   * En la aplicación de Apps Script no hace casi nada: google.script.run ya existe y el
+   * servidor entrega los datos de la página en APP. En la web estática (GitHub Pages) APP
+   * llega como {"modo":"web"}: aquí se crea google.script.run, que llama a la aplicación
+   * de Apps Script con un POST de texto plano (así el navegador no necesita preflight
+   * CORS), y se piden los datos de la página que en Apps Script inyecta el servidor.
+   */
+  window.HR = (function () {
+    const TIEMPO_MAXIMO_MS = 45000;
+
+    function baseWeb() {
+      return location.origin + location.pathname.replace(/[^\/]*$/, '');
+    }
+
+    function mensajeFatal(texto) {
+      document.body.textContent = '';
+      const parrafo = document.createElement('p');
+      parrafo.style.cssText = 'max-width:34rem;margin:3rem auto;padding:0 1rem;font:16px/1.5 system-ui,sans-serif;color:#0f1b2d';
+      parrafo.textContent = texto;
+      document.body.appendChild(parrafo);
+    }
+
+    function instalarApi(apiUrl, origen) {
+      function crear(exito, fallo) {
+        return new Proxy({}, {
+          get: function (destino, nombre) {
+            if (nombre === 'withSuccessHandler') {
+              return function (funcion) { return crear(funcion, fallo); };
+            }
+            if (nombre === 'withFailureHandler') {
+              return function (funcion) { return crear(exito, funcion); };
+            }
+            if (typeof nombre !== 'string') {
+              return undefined;
+            }
+            return function () {
+              const argumentos = Array.prototype.slice.call(arguments);
+              const control = typeof AbortController === 'function' ? new AbortController() : null;
+              const reloj = control ? setTimeout(function () { control.abort(); }, TIEMPO_MAXIMO_MS) : null;
+
+              fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ fn: nombre, args: argumentos, origen: origen }),
+                redirect: 'follow',
+                signal: control ? control.signal : undefined
+              })
+                .then(function (respuesta) {
+                  if (!respuesta.ok) {
+                    throw new Error('HTTP ' + respuesta.status);
+                  }
+                  return respuesta.json();
+                })
+                .then(
+                  function (json) { return { json: json, error: null }; },
+                  function (error) { return { json: null, error: error }; }
+                )
+                .then(function (salida) {
+                  if (reloj) {
+                    clearTimeout(reloj);
+                  }
+                  if (salida.error || !salida.json || salida.json.error) {
+                    if (fallo) {
+                      fallo(salida.error || new Error(salida.json && salida.json.error ? salida.json.error : 'Respuesta no válida'));
+                    }
+                  } else if (exito) {
+                    exito(salida.json.resultado);
+                  }
+                });
+            };
+          }
+        });
+      }
+      window.google = { script: { run: crear(null, null) } };
+    }
+
+    /**
+     * Prepara la página y llama a listo() cuando APP ya está completo.
+     * Si el servidor responde con otra página (por ejemplo el login porque caducó la
+     * sesión), redirige a ella.
+     */
+    function preparar(APP, pagina, listo) {
+      if (APP.modo !== 'web') {
+        listo();
+        return;
+      }
+
+      const configuracion = window.HAPPYREVIEW_CONFIG || {};
+      const apiUrl = String(configuracion.apiUrl || '');
+      const valida = /^https:\/\/script\.google\.com\/[^\s?#]+\/exec$/.test(apiUrl)
+        || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(apiUrl);
+      if (!valida) {
+        mensajeFatal('Falta configurar la web: abre el archivo config.js y pega en apiUrl la dirección de la aplicación de Apps Script (la que termina en /exec).');
+        return;
+      }
+
+      // Hasta que la página esté lista no hay manejadores: sin esto, un formulario enviado
+      // demasiado pronto se enviaría por la URL (con la contraseña a la vista).
+      let preparada = false;
+      document.addEventListener('submit', function (evento) {
+        if (!preparada) {
+          evento.preventDefault();
+        }
+      }, true);
+
+      const base = baseWeb();
+      instalarApi(apiUrl, base);
+
+      const consulta = new URLSearchParams(location.search);
+      const parametros = {};
+      ['e', 'c', 'token', 'salir', 'aviso'].forEach(function (clave) {
+        if (consulta.has(clave)) {
+          parametros[clave] = consulta.get(clave);
+        }
+      });
+
+      window.google.script.run
+        .withSuccessHandler(function (respuesta) {
+          if (!respuesta || !respuesta.ok) {
+            mensajeFatal(respuesta && respuesta.mensaje ? respuesta.mensaje : 'No se pudo cargar la página. Inténtalo de nuevo en unos segundos.');
+            return;
+          }
+          if (respuesta.pagina !== pagina) {
+            let destino = base + '?page=' + respuesta.pagina;
+            if (respuesta.pagina === 'login' && respuesta.datos && respuesta.datos.tipo === 'info') {
+              destino += '&aviso=caducada';
+            }
+            location.replace(destino);
+            return;
+          }
+          Object.assign(APP, respuesta.datos, { baseUrl: base });
+          if (respuesta.titulo) {
+            document.title = respuesta.titulo;
+          }
+          preparada = true;
+          listo();
+        })
+        .withFailureHandler(function () {
+          mensajeFatal('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo en unos segundos.');
+        })
+        .obtenerDatosPagina(pagina, parametros);
+    }
+
+    /**
+     * Ventana de confirmación dentro de la página (los diálogos del navegador no están
+     * disponibles dentro de Apps Script). opciones: { titulo, texto, boton, alAceptar }.
+     */
+    function confirmar(opciones) {
+      const velo = document.createElement('div');
+      velo.className = 'velo';
+      const ventana = document.createElement('div');
+      ventana.className = 'ventana';
+      ventana.setAttribute('role', 'alertdialog');
+      ventana.setAttribute('aria-modal', 'true');
+
+      const titulo = document.createElement('h2');
+      titulo.textContent = opciones.titulo;
+      const texto = document.createElement('p');
+      texto.className = 'ayuda';
+      texto.textContent = opciones.texto;
+      const acciones = document.createElement('div');
+      acciones.className = 'acciones';
+
+      const aceptar = document.createElement('button');
+      aceptar.type = 'button';
+      aceptar.className = 'btn btn-peligro-solido';
+      aceptar.textContent = opciones.boton || 'Eliminar';
+      const cancelar = document.createElement('button');
+      cancelar.type = 'button';
+      cancelar.className = 'btn btn-secundario';
+      cancelar.textContent = 'Cancelar';
+
+      function cerrar() {
+        document.removeEventListener('keydown', alTeclear);
+        if (velo.parentNode) {
+          velo.parentNode.removeChild(velo);
+        }
+      }
+      function alTeclear(evento) {
+        if (evento.key === 'Escape') {
+          cerrar();
+        }
+      }
+
+      aceptar.addEventListener('click', function () {
+        cerrar();
+        opciones.alAceptar();
+      });
+      cancelar.addEventListener('click', cerrar);
+      velo.addEventListener('click', function (evento) {
+        if (evento.target === velo) {
+          cerrar();
+        }
+      });
+      document.addEventListener('keydown', alTeclear);
+
+      acciones.appendChild(aceptar);
+      acciones.appendChild(cancelar);
+      ventana.appendChild(titulo);
+      ventana.appendChild(texto);
+      ventana.appendChild(acciones);
+      velo.appendChild(ventana);
+      document.body.appendChild(velo);
+      cancelar.focus();
+    }
+
+    /** Copia un texto al portapapeles; devuelve true si lo consiguió. */
+    function copiar(texto, campoAuxiliar) {
+      try {
+        if (campoAuxiliar) {
+          campoAuxiliar.focus();
+          campoAuxiliar.select();
+          return document.execCommand('copy');
+        }
+        const area = document.createElement('textarea');
+        area.value = texto;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        const copiado = document.execCommand('copy');
+        document.body.removeChild(area);
+        return copiado;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    return { preparar: preparar, confirmar: confirmar, copiar: copiar, baseWeb: baseWeb };
+  })();
+</script>
+</head>
+<body>
+  <header class="barra">
+    <div class="barra-in">
+      <a class="marca" id="enlace-marca" href="#"><span class="marca-icono" aria-hidden="true">★</span><span>HAPPYREVIEW</span></a>
+      <nav class="nav" aria-label="Principal">
+        <a id="nav-dashboard" href="#">Panel</a>
+        <a id="nav-empresas" href="#" aria-current="page">Empresas</a>
+        <a id="nav-usuarios" href="#">Usuarios</a>
+      </nav>
+      <div class="barra-usuario">
+        <span id="usuario-nombre"></span>
+        <a id="enlace-salir" class="btn btn-barra" href="#">Salir</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <div class="cabecera-pagina">
+      <h1>Empresas</h1>
+      <p>Da de alta una empresa, entrégale su QR para que sus clientes la valoren y su acceso privado para que vea sus valoraciones.</p>
+    </div>
+
+    <div id="aviso" class="aviso" role="alert" hidden></div>
+
+    <div class="dos-columnas">
+      <section class="panel" id="panel-formulario" aria-labelledby="titulo-formulario">
+        <h2 class="panel-titulo" id="titulo-formulario">Nueva empresa</h2>
+        <form id="form-empresa">
+          <input type="hidden" id="empresa-id">
+
+          <div class="campo">
+            <label for="nombre">Nombre de la empresa</label>
+            <input id="nombre" type="text" maxlength="120" autocomplete="organization" required>
+          </div>
+          <div class="campo">
+            <label for="email">Email de la empresa</label>
+            <input id="email" type="email" maxlength="254" autocomplete="email" required>
+            <span class="ayuda">Recibirá aquí los comentarios privados de 1 a 3 estrellas.</span>
+          </div>
+          <div class="campo">
+            <label for="google-url">Enlace de reseñas de Google</label>
+            <input id="google-url" type="url" maxlength="2000" placeholder="https://g.page/r/…/review" required>
+            <span class="ayuda">A esta dirección irán los clientes que valoren con 4 o 5 estrellas.</span>
+          </div>
+
+          <div class="casilla">
+            <input id="activo" type="checkbox" checked>
+            <label for="activo">Empresa activa (acepta valoraciones)</label>
+          </div>
+          <div class="casilla" id="fila-enviar-email">
+            <input id="enviar-email" type="checkbox" checked>
+            <label for="enviar-email">Enviar a la empresa su enlace de valoración y su acceso al panel</label>
+          </div>
+
+          <div id="aviso-formulario" class="aviso" role="alert" hidden></div>
+
+          <div class="acciones">
+            <button id="btn-guardar" class="btn btn-primario" type="submit">Crear empresa</button>
+            <button id="btn-cancelar" class="btn btn-secundario" type="button" hidden>Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <section aria-labelledby="titulo-lista">
+        <h2 class="lista-titulo" id="titulo-lista">Empresas registradas (<span id="contador-empresas">0</span>)</h2>
+        <div class="tabla-caja">
+          <table>
+            <thead>
+              <tr>
+                <th>Empresa</th>
+                <th>Reseñas en Google</th>
+                <th>Estado</th>
+                <th>Alta</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-empresas"></tbody>
+          </table>
+          <p class="vacio" id="vacio-empresas" hidden>Todavía no hay empresas. Crea la primera con el formulario.</p>
+          <p class="vacio" id="cargando-empresas">Cargando empresas…</p>
+        </div>
+      </section>
+    </div>
+
+    <details class="panel bloque" id="panel-direcciones">
+      <summary>Direcciones de la aplicación (QR y enlaces)</summary>
+      <p class="ayuda">Los QR, los emails y los enlaces privados de las empresas usan estas direcciones. Normalmente se detectan solas; solo hay que tocarlas si algo apunta a un sitio equivocado.</p>
+      <div id="aviso-direcciones" class="aviso" role="alert" hidden></div>
+      <p class="detalle-fila">Dirección que abren ahora los clientes: <strong id="direccion-actual">—</strong></p>
+      <form id="form-url-app" class="form-estrecho" novalidate>
+        <div class="campo">
+          <label for="url-app">Aplicación de Apps Script (termina en /exec)</label>
+          <input id="url-app" type="url" maxlength="300" placeholder="https://script.google.com/macros/s/…/exec">
+          <span class="ayuda">Pégala si los QR salen con una dirección equivocada. Si la dejas vacía, se detecta sola.</span>
+        </div>
+        <button id="btn-url-app" class="btn btn-secundario" type="submit">Guardar dirección de la aplicación</button>
+      </form>
+      <hr class="separador">
+      <form id="form-url-web" class="form-estrecho" novalidate>
+        <div class="campo">
+          <label for="url-web">Web en GitHub Pages (opcional)</label>
+          <input id="url-web" type="url" maxlength="300" placeholder="https://usuario.github.io/happyreview/">
+          <span class="ayuda">Si publicas la web en GitHub, los QR y los enlaces apuntarán allí. Se rellena sola al iniciar sesión desde esa web.</span>
+        </div>
+        <button id="btn-url-web" class="btn btn-secundario" type="submit">Guardar dirección de la web</button>
+      </form>
+    </details>
+  </main>
+
+  <div class="velo" id="velo-acceso" hidden>
+    <div class="ventana ventana-ancha" role="dialog" aria-modal="true" aria-labelledby="acceso-titulo">
+      <h2 id="acceso-titulo">Acceso de la empresa</h2>
+      <p class="ayuda">La empresa entra a su panel con su enlace privado, su email y su contraseña. Allí ve todas sus valoraciones y puede marcar las reseñas que ya aparecen en Google.</p>
+      <div id="acceso-aviso" class="aviso" role="alert" hidden></div>
+      <div id="acceso-clave" class="clave-nueva" hidden>
+        <p>Contraseña nueva. Cópiala ahora: no se vuelve a mostrar.</p>
+        <strong id="acceso-clave-valor"></strong>
+        <button id="acceso-clave-copiar" class="btn btn-secundario btn-pequeno" type="button">Copiar contraseña</button>
+      </div>
+      <div class="campo">
+        <label for="acceso-enlace">Enlace privado</label>
+        <div class="campo-fila">
+          <input id="acceso-enlace" type="text" readonly>
+          <button id="acceso-copiar" class="btn btn-secundario" type="button">Copiar</button>
+          <a id="acceso-abrir" class="btn btn-secundario" href="#" target="_blank" rel="noopener noreferrer">Abrir</a>
+        </div>
+      </div>
+      <p class="detalle-fila">Usuario: <strong id="acceso-usuario"></strong><br>Contraseña: <strong id="acceso-estado-clave"></strong></p>
+      <hr class="separador">
+      <div class="casilla">
+        <input id="acceso-regenerar" type="checkbox">
+        <label for="acceso-regenerar">Crear también un enlace privado nuevo (el actual dejará de funcionar)</label>
+      </div>
+      <div class="casilla">
+        <input id="acceso-enviar" type="checkbox">
+        <label for="acceso-enviar">Enviar el acceso por email a la empresa</label>
+      </div>
+      <div class="acciones">
+        <button id="acceso-nueva" class="btn btn-primario" type="button">Crear contraseña nueva</button>
+        <button id="acceso-qr" class="btn btn-secundario" type="button">Ver QR</button>
+        <button id="acceso-cerrar" class="btn btn-secundario" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="velo" id="velo-qr" hidden>
+    <div class="ventana" role="dialog" aria-modal="true" aria-labelledby="qr-titulo">
+      <h2 id="qr-titulo">Código QR</h2>
+      <p class="ayuda">Al escanearlo, el cliente abre la página de valoración de esta empresa.</p>
+      <div id="qr-aviso" class="aviso aviso-info" hidden></div>
+      <div class="qr-marco">
+        <canvas id="qr-lienzo" role="img" aria-label="Código QR de la página de valoración"></canvas>
+      </div>
+      <div class="campo">
+        <label for="qr-url">Enlace de valoración</label>
+        <input id="qr-url" type="text" readonly>
+      </div>
+      <p class="ayuda">Prueba el enlace en una ventana de incógnito o desde el móvil con datos: así verás lo mismo que verá un cliente.</p>
+      <p class="ayuda" id="qr-ayuda-descarga" hidden>Si la descarga no empieza, haz clic derecho sobre el QR y guarda la imagen.</p>
+      <div class="acciones">
+        <button id="qr-descargar" class="btn btn-primario" type="button">Descargar PNG</button>
+        <button id="qr-copiar" class="btn btn-secundario" type="button">Copiar enlace</button>
+        <a id="qr-abrir" class="btn btn-secundario" href="#" target="_blank" rel="noopener noreferrer">Abrir página</a>
+        <button id="qr-cerrar" class="btn btn-secundario" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const APP = {"modo":"web"};
+
+    /**
+     * Generador de códigos QR en JavaScript puro, sin librerías.
+     * Modo byte (UTF-8), corrección de errores nivel M, versiones 1 a 40.
+     */
+    const GeneradorQr = (function () {
+      const ECC_POR_BLOQUE = [-1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28];
+      const NUM_BLOQUES = [-1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49];
+      const PATRON_A = [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0];
+      const PATRON_B = [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1];
+
+      function bit(valor, posicion) {
+        return ((valor >>> posicion) & 1) === 1;
+      }
+
+      function modulosBrutos(version) {
+        let resultado = (16 * version + 128) * version + 64;
+        if (version >= 2) {
+          const alineaciones = Math.floor(version / 7) + 2;
+          resultado -= (25 * alineaciones - 10) * alineaciones - 55;
+          if (version >= 7) {
+            resultado -= 36;
+          }
+        }
+        return resultado;
+      }
+
+      function palabrasDeDatos(version) {
+        return Math.floor(modulosBrutos(version) / 8) - ECC_POR_BLOQUE[version] * NUM_BLOQUES[version];
+      }
+
+      function posicionesAlineacion(version) {
+        if (version === 1) {
+          return [];
+        }
+        const cantidad = Math.floor(version / 7) + 2;
+        const paso = version === 32 ? 26 : Math.ceil((version * 4 + 4) / (cantidad * 2 - 2)) * 2;
+        const resultado = [6];
+        for (let posicion = version * 4 + 10; resultado.length < cantidad; posicion -= paso) {
+          resultado.splice(1, 0, posicion);
+        }
+        return resultado;
+      }
+
+      /* ---------- Reed-Solomon sobre GF(256) ---------- */
+      function multiplicarGf(x, y) {
+        let z = 0;
+        for (let i = 7; i >= 0; i--) {
+          z = (z << 1) ^ ((z >>> 7) * 0x11d);
+          z ^= ((y >>> i) & 1) * x;
+        }
+        return z;
+      }
+
+      function divisorReedSolomon(grado) {
+        const resultado = new Array(grado).fill(0);
+        resultado[grado - 1] = 1;
+        let raiz = 1;
+        for (let i = 0; i < grado; i++) {
+          for (let j = 0; j < grado; j++) {
+            resultado[j] = multiplicarGf(resultado[j], raiz);
+            if (j + 1 < grado) {
+              resultado[j] ^= resultado[j + 1];
+            }
+          }
+          raiz = multiplicarGf(raiz, 0x02);
+        }
+        return resultado;
+      }
+
+      function restoReedSolomon(datos, divisor) {
+        const resultado = divisor.map(function () {
+          return 0;
+        });
+        datos.forEach(function (valor) {
+          const factor = valor ^ resultado.shift();
+          resultado.push(0);
+          divisor.forEach(function (coeficiente, i) {
+            resultado[i] ^= multiplicarGf(coeficiente, factor);
+          });
+        });
+        return resultado;
+      }
+
+      function agregarCorreccion(datos, version) {
+        const bloques = NUM_BLOQUES[version];
+        const longitudEcc = ECC_POR_BLOQUE[version];
+        const totalPalabras = Math.floor(modulosBrutos(version) / 8);
+        const bloquesCortos = bloques - (totalPalabras % bloques);
+        const longitudCorto = Math.floor(totalPalabras / bloques);
+        const divisor = divisorReedSolomon(longitudEcc);
+        const lista = [];
+
+        for (let i = 0, inicio = 0; i < bloques; i++) {
+          const trozo = datos.slice(inicio, inicio + longitudCorto - longitudEcc + (i < bloquesCortos ? 0 : 1));
+          inicio += trozo.length;
+          const ecc = restoReedSolomon(trozo, divisor);
+          if (i < bloquesCortos) {
+            trozo.push(0);
+          }
+          lista.push(trozo.concat(ecc));
+        }
+
+        const resultado = [];
+        for (let i = 0; i < lista[0].length; i++) {
+          lista.forEach(function (bloque, j) {
+            if (i !== longitudCorto - longitudEcc || j >= bloquesCortos) {
+              resultado.push(bloque[i]);
+            }
+          });
+        }
+        return resultado;
+      }
+
+      /* ---------- Matriz de módulos ---------- */
+      function crearMatriz(tamano) {
+        const matriz = [];
+        for (let y = 0; y < tamano; y++) {
+          matriz.push(new Array(tamano).fill(false));
+        }
+        return matriz;
+      }
+
+      function poner(matriz, funcion, x, y, valor) {
+        matriz[y][x] = valor;
+        if (funcion) {
+          funcion[y][x] = true;
+        }
+      }
+
+      function dibujarBuscador(matriz, funcion, centroX, centroY) {
+        const tamano = matriz.length;
+        for (let dy = -4; dy <= 4; dy++) {
+          for (let dx = -4; dx <= 4; dx++) {
+            const x = centroX + dx;
+            const y = centroY + dy;
+            if (x >= 0 && x < tamano && y >= 0 && y < tamano) {
+              const distancia = Math.max(Math.abs(dx), Math.abs(dy));
+              poner(matriz, funcion, x, y, distancia !== 2 && distancia !== 4);
+            }
+          }
+        }
+      }
+
+      function dibujarAlineacion(matriz, funcion, centroX, centroY) {
+        for (let dy = -2; dy <= 2; dy++) {
+          for (let dx = -2; dx <= 2; dx++) {
+            poner(matriz, funcion, centroX + dx, centroY + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+          }
+        }
+      }
+
+      function dibujarFormato(matriz, funcion, mascara) {
+        const tamano = matriz.length;
+        const datos = mascara;
+        let resto = datos;
+        for (let i = 0; i < 10; i++) {
+          resto = (resto << 1) ^ ((resto >>> 9) * 0x537);
+        }
+        const bits = ((datos << 10) | resto) ^ 0x5412;
+
+        for (let i = 0; i <= 5; i++) {
+          poner(matriz, funcion, 8, i, bit(bits, i));
+        }
+        poner(matriz, funcion, 8, 7, bit(bits, 6));
+        poner(matriz, funcion, 8, 8, bit(bits, 7));
+        poner(matriz, funcion, 7, 8, bit(bits, 8));
+        for (let i = 9; i < 15; i++) {
+          poner(matriz, funcion, 14 - i, 8, bit(bits, i));
+        }
+        for (let i = 0; i < 8; i++) {
+          poner(matriz, funcion, tamano - 1 - i, 8, bit(bits, i));
+        }
+        for (let i = 8; i < 15; i++) {
+          poner(matriz, funcion, 8, tamano - 15 + i, bit(bits, i));
+        }
+        poner(matriz, funcion, 8, tamano - 8, true);
+      }
+
+      function dibujarVersion(matriz, funcion, version) {
+        if (version < 7) {
+          return;
+        }
+        const tamano = matriz.length;
+        let resto = version;
+        for (let i = 0; i < 12; i++) {
+          resto = (resto << 1) ^ ((resto >>> 11) * 0x1f25);
+        }
+        const bits = (version << 12) | resto;
+        for (let i = 0; i < 18; i++) {
+          const color = bit(bits, i);
+          const a = tamano - 11 + (i % 3);
+          const b = Math.floor(i / 3);
+          poner(matriz, funcion, a, b, color);
+          poner(matriz, funcion, b, a, color);
+        }
+      }
+
+      function dibujarPatrones(version) {
+        const tamano = version * 4 + 17;
+        const matriz = crearMatriz(tamano);
+        const funcion = crearMatriz(tamano);
+
+        for (let i = 0; i < tamano; i++) {
+          poner(matriz, funcion, 6, i, i % 2 === 0);
+          poner(matriz, funcion, i, 6, i % 2 === 0);
+        }
+        dibujarBuscador(matriz, funcion, 3, 3);
+        dibujarBuscador(matriz, funcion, tamano - 4, 3);
+        dibujarBuscador(matriz, funcion, 3, tamano - 4);
+
+        const posiciones = posicionesAlineacion(version);
+        const ultima = posiciones.length - 1;
+        posiciones.forEach(function (x, i) {
+          posiciones.forEach(function (y, j) {
+            const enEsquina = (i === 0 && j === 0) || (i === 0 && j === ultima) || (i === ultima && j === 0);
+            if (!enEsquina) {
+              dibujarAlineacion(matriz, funcion, x, y);
+            }
+          });
+        });
+
+        dibujarFormato(matriz, funcion, 0);
+        dibujarVersion(matriz, funcion, version);
+        return { matriz: matriz, funcion: funcion };
+      }
+
+      function colocarDatos(matriz, funcion, palabras) {
+        const tamano = matriz.length;
+        let indice = 0;
+        for (let derecha = tamano - 1; derecha >= 1; derecha -= 2) {
+          if (derecha === 6) {
+            derecha = 5;
+          }
+          for (let vertical = 0; vertical < tamano; vertical++) {
+            for (let j = 0; j < 2; j++) {
+              const x = derecha - j;
+              const haciaArriba = ((derecha + 1) & 2) === 0;
+              const y = haciaArriba ? tamano - 1 - vertical : vertical;
+              if (!funcion[y][x] && indice < palabras.length * 8) {
+                matriz[y][x] = bit(palabras[indice >>> 3], 7 - (indice & 7));
+                indice++;
+              }
+            }
+          }
+        }
+      }
+
+      function aplicarMascara(matriz, funcion, mascara) {
+        const tamano = matriz.length;
+        for (let y = 0; y < tamano; y++) {
+          for (let x = 0; x < tamano; x++) {
+            if (funcion[y][x]) {
+              continue;
+            }
+            let invertir;
+            switch (mascara) {
+              case 0: invertir = (x + y) % 2 === 0; break;
+              case 1: invertir = y % 2 === 0; break;
+              case 2: invertir = x % 3 === 0; break;
+              case 3: invertir = (x + y) % 3 === 0; break;
+              case 4: invertir = (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0; break;
+              case 5: invertir = (x * y) % 2 + (x * y) % 3 === 0; break;
+              case 6: invertir = ((x * y) % 2 + (x * y) % 3) % 2 === 0; break;
+              default: invertir = ((x + y) % 2 + (x * y) % 3) % 2 === 0;
+            }
+            if (invertir) {
+              matriz[y][x] = !matriz[y][x];
+            }
+          }
+        }
+      }
+
+      function coincidePatron(linea, inicio, patron) {
+        for (let k = 0; k < patron.length; k++) {
+          if (Boolean(linea[inicio + k]) !== Boolean(patron[k])) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      /** Puntuación de penalización de la especificación QR: gana la máscara con menos puntos. */
+      function penalizacion(matriz) {
+        const tamano = matriz.length;
+        const lineas = [];
+        let puntos = 0;
+        let oscuros = 0;
+
+        for (let y = 0; y < tamano; y++) {
+          lineas.push(matriz[y]);
+          const columna = [];
+          for (let x = 0; x < tamano; x++) {
+            columna.push(matriz[x][y]);
+            if (matriz[y][x]) {
+              oscuros++;
+            }
+          }
+          lineas.push(columna);
+        }
+
+        lineas.forEach(function (linea) {
+          let racha = 1;
+          for (let i = 1; i <= tamano; i++) {
+            if (i < tamano && linea[i] === linea[i - 1]) {
+              racha++;
+            } else {
+              if (racha >= 5) {
+                puntos += 3 + (racha - 5);
+              }
+              racha = 1;
+            }
+          }
+          for (let i = 0; i + 11 <= tamano; i++) {
+            if (coincidePatron(linea, i, PATRON_A) || coincidePatron(linea, i, PATRON_B)) {
+              puntos += 40;
+            }
+          }
+        });
+
+        for (let y = 0; y < tamano - 1; y++) {
+          for (let x = 0; x < tamano - 1; x++) {
+            const color = matriz[y][x];
+            if (color === matriz[y][x + 1] && color === matriz[y + 1][x] && color === matriz[y + 1][x + 1]) {
+              puntos += 3;
+            }
+          }
+        }
+
+        const total = tamano * tamano;
+        puntos += (Math.ceil(Math.abs(oscuros * 20 - total * 10) / total) - 1) * 10;
+        return puntos;
+      }
+
+      /** Crea el código QR de un texto. Devuelve { tamano, modulos, version }. */
+      function crear(texto) {
+        const bytes = Array.from(new TextEncoder().encode(texto));
+
+        let version = 1;
+        while (version <= 40 && 4 + (version <= 9 ? 8 : 16) + bytes.length * 8 > palabrasDeDatos(version) * 8) {
+          version++;
+        }
+        if (version > 40) {
+          throw new Error('El enlace es demasiado largo para un código QR.');
+        }
+
+        const bits = [];
+        function agregar(valor, cantidad) {
+          for (let i = cantidad - 1; i >= 0; i--) {
+            bits.push((valor >>> i) & 1);
+          }
+        }
+        const capacidad = palabrasDeDatos(version) * 8;
+        agregar(0x4, 4);
+        agregar(bytes.length, version <= 9 ? 8 : 16);
+        bytes.forEach(function (valor) {
+          agregar(valor, 8);
+        });
+        agregar(0, Math.min(4, capacidad - bits.length));
+        agregar(0, (8 - (bits.length % 8)) % 8);
+        for (let relleno = 0xec; bits.length < capacidad; relleno ^= 0xec ^ 0x11) {
+          agregar(relleno, 8);
+        }
+
+        const datos = [];
+        for (let i = 0; i < bits.length; i += 8) {
+          let valor = 0;
+          for (let j = 0; j < 8; j++) {
+            valor = (valor << 1) | bits[i + j];
+          }
+          datos.push(valor);
+        }
+
+        const base = dibujarPatrones(version);
+        colocarDatos(base.matriz, base.funcion, agregarCorreccion(datos, version));
+
+        let mejor = null;
+        let mejorPuntos = Infinity;
+        for (let mascara = 0; mascara < 8; mascara++) {
+          const copia = base.matriz.map(function (fila) {
+            return fila.slice();
+          });
+          aplicarMascara(copia, base.funcion, mascara);
+          dibujarFormato(copia, null, mascara);
+          const puntos = penalizacion(copia);
+          if (puntos < mejorPuntos) {
+            mejor = copia;
+            mejorPuntos = puntos;
+          }
+        }
+        return { tamano: mejor.length, modulos: mejor, version: version };
+      }
+
+      /** Dibuja el QR en un canvas con la zona blanca de 4 módulos que exige el estándar. */
+      function dibujar(lienzo, qr, pixelesObjetivo) {
+        const margen = 4;
+        const celdas = qr.tamano + margen * 2;
+        const escala = Math.max(2, Math.floor(pixelesObjetivo / celdas));
+        lienzo.width = celdas * escala;
+        lienzo.height = celdas * escala;
+
+        const contexto = lienzo.getContext('2d');
+        contexto.fillStyle = '#ffffff';
+        contexto.fillRect(0, 0, lienzo.width, lienzo.height);
+        contexto.fillStyle = '#000000';
+        for (let y = 0; y < qr.tamano; y++) {
+          for (let x = 0; x < qr.tamano; x++) {
+            if (qr.modulos[y][x]) {
+              contexto.fillRect((x + margen) * escala, (y + margen) * escala, escala, escala);
+            }
+          }
+        }
+      }
+
+      return { crear: crear, dibujar: dibujar };
+    })();
+
+    HR.preparar(APP, 'empresas', function () {
+      const TOKEN = APP.token;
+      let empresas = [];
+      let empresaQr = null;
+      let empresaAcceso = null;
+
+      const AVISO_URL_NO_PUBLICA = 'La aplicación todavía no conoce su dirección pública, así que los QR no funcionarían para tus clientes. ' +
+        'Pégala en «Direcciones de la aplicación» (más abajo): es la URL que Apps Script te dio al publicarla y termina en /exec.';
+
+      const aviso = document.getElementById('aviso');
+      const avisoFormulario = document.getElementById('aviso-formulario');
+      const formulario = document.getElementById('form-empresa');
+      const campoId = document.getElementById('empresa-id');
+      const campoNombre = document.getElementById('nombre');
+      const campoEmail = document.getElementById('email');
+      const campoGoogle = document.getElementById('google-url');
+      const campoActivo = document.getElementById('activo');
+      const campoEnviarEmail = document.getElementById('enviar-email');
+      const filaEnviarEmail = document.getElementById('fila-enviar-email');
+      const botonGuardar = document.getElementById('btn-guardar');
+      const botonCancelar = document.getElementById('btn-cancelar');
+      const panelFormulario = document.getElementById('panel-formulario');
+      const tituloFormulario = document.getElementById('titulo-formulario');
+
+      const velo = document.getElementById('velo-qr');
+      const lienzoQr = document.getElementById('qr-lienzo');
+      const marcoQr = lienzoQr.parentElement;
+      const avisoQr = document.getElementById('qr-aviso');
+      const campoUrlQr = document.getElementById('qr-url');
+      const enlaceAbrirQr = document.getElementById('qr-abrir');
+      const botonCerrarQr = document.getElementById('qr-cerrar');
+      const botonDescargarQr = document.getElementById('qr-descargar');
+      const ayudaDescarga = document.getElementById('qr-ayuda-descarga');
+
+      const veloAcceso = document.getElementById('velo-acceso');
+      const avisoAcceso = document.getElementById('acceso-aviso');
+      const cajaClave = document.getElementById('acceso-clave');
+      const valorClave = document.getElementById('acceso-clave-valor');
+      const campoEnlaceAcceso = document.getElementById('acceso-enlace');
+      const enlaceAbrirAcceso = document.getElementById('acceso-abrir');
+      const botonNuevaClave = document.getElementById('acceso-nueva');
+      const casillaRegenerar = document.getElementById('acceso-regenerar');
+      const casillaEnviarAcceso = document.getElementById('acceso-enviar');
+
+      const panelDirecciones = document.getElementById('panel-direcciones');
+      const avisoDirecciones = document.getElementById('aviso-direcciones');
+      const campoUrlApp = document.getElementById('url-app');
+      const campoUrlWeb = document.getElementById('url-web');
+
+      function urlPanel(pagina) {
+        return APP.baseUrl + '?page=' + pagina + '&token=' + encodeURIComponent(TOKEN);
+      }
+
+      function mostrarAviso(elemento, texto, tipo) {
+        elemento.textContent = texto;
+        elemento.className = 'aviso aviso-' + (tipo || 'info');
+        elemento.hidden = !texto;
+      }
+
+      function sesionCaducada() {
+        const enlace = document.createElement('a');
+        enlace.href = APP.baseUrl;
+        enlace.target = '_top';
+        enlace.textContent = 'Iniciar sesión';
+        mostrarAviso(aviso, 'Tu sesión ha caducado. ', 'info');
+        aviso.appendChild(enlace);
+      }
+
+      function fallo(elemento, respuesta) {
+        if (respuesta && respuesta.sesionExpirada) {
+          sesionCaducada();
+          return;
+        }
+        mostrarAviso(elemento, respuesta && respuesta.mensaje ? respuesta.mensaje : 'No se pudo completar la operación.', 'error');
+      }
+
+      function crear(etiqueta, clase, texto) {
+        const nodo = document.createElement(etiqueta);
+        if (clase) {
+          nodo.className = clase;
+        }
+        if (texto !== undefined) {
+          nodo.textContent = texto;
+        }
+        return nodo;
+      }
+
+      function esHttps(url) {
+        return /^https:\/\//i.test(String(url));
+      }
+
+      /* ---------- Cabecera ---------- */
+      document.getElementById('enlace-marca').href = urlPanel('dashboard');
+      document.getElementById('nav-dashboard').href = urlPanel('dashboard');
+      document.getElementById('nav-empresas').href = urlPanel('empresas');
+      document.getElementById('nav-usuarios').href = urlPanel('usuarios');
+      document.getElementById('enlace-salir').href = APP.baseUrl + '?page=login&salir=' + encodeURIComponent(TOKEN);
+      document.getElementById('usuario-nombre').textContent = APP.usuario;
+
+      /* ---------- Tabla de empresas ---------- */
+      function pintarTabla() {
+        const cuerpo = document.getElementById('tabla-empresas');
+        cuerpo.textContent = '';
+        document.getElementById('cargando-empresas').hidden = true;
+        document.getElementById('vacio-empresas').hidden = empresas.length > 0;
+        document.getElementById('contador-empresas').textContent = empresas.length;
+
+        empresas.forEach(function (empresa) {
+          const fila = crear('tr');
+
+          const tdNombre = crear('td');
+          tdNombre.appendChild(document.createTextNode(empresa.nombre));
+          tdNombre.appendChild(crear('span', 'secundario', empresa.email));
+          fila.appendChild(tdNombre);
+
+          const tdGoogle = crear('td');
+          if (esHttps(empresa.googleUrl)) {
+            const enlace = crear('a', 'enlace-corto', empresa.googleUrl);
+            enlace.href = empresa.googleUrl;
+            enlace.target = '_blank';
+            enlace.rel = 'noopener noreferrer';
+            enlace.title = empresa.googleUrl;
+            tdGoogle.appendChild(enlace);
+          } else {
+            tdGoogle.textContent = '—';
+          }
+          fila.appendChild(tdGoogle);
+
+          const tdEstado = crear('td', 'nowrap');
+          tdEstado.appendChild(crear('span', 'etiqueta ' + (empresa.activo ? 'etiqueta-pos' : 'etiqueta-apagada'), empresa.activo ? 'Activa' : 'Inactiva'));
+          fila.appendChild(tdEstado);
+
+          fila.appendChild(crear('td', 'nowrap', empresa.fecha));
+
+          const tdAcciones = crear('td');
+          const contenedorAcciones = crear('div', 'celda-acciones');
+          const botonEditar = crear('button', 'btn btn-secundario btn-pequeno', 'Editar');
+          botonEditar.type = 'button';
+          botonEditar.setAttribute('aria-label', 'Editar ' + empresa.nombre);
+          botonEditar.addEventListener('click', function () {
+            empezarEdicion(empresa);
+          });
+          const botonQr = crear('button', 'btn btn-primario btn-pequeno', 'Ver QR');
+          botonQr.type = 'button';
+          botonQr.setAttribute('aria-label', 'Ver el QR de ' + empresa.nombre);
+          botonQr.addEventListener('click', function () {
+            abrirQr(empresa);
+          });
+          const botonAcceso = crear('button', 'btn btn-secundario btn-pequeno', 'Acceso');
+          botonAcceso.type = 'button';
+          botonAcceso.setAttribute('aria-label', 'Acceso privado de ' + empresa.nombre);
+          botonAcceso.addEventListener('click', function () {
+            abrirAcceso(empresa, '');
+          });
+          const botonEliminar = crear('button', 'btn btn-peligro btn-pequeno', 'Eliminar');
+          botonEliminar.type = 'button';
+          botonEliminar.setAttribute('aria-label', 'Eliminar ' + empresa.nombre);
+          botonEliminar.addEventListener('click', function () {
+            eliminarEmpresa(empresa);
+          });
+          contenedorAcciones.appendChild(botonEditar);
+          contenedorAcciones.appendChild(botonQr);
+          contenedorAcciones.appendChild(botonAcceso);
+          contenedorAcciones.appendChild(botonEliminar);
+          tdAcciones.appendChild(contenedorAcciones);
+          fila.appendChild(tdAcciones);
+
+          cuerpo.appendChild(fila);
+        });
+      }
+
+      function cargarEmpresas() {
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            document.getElementById('cargando-empresas').hidden = true;
+            if (!respuesta || !respuesta.ok) {
+              fallo(aviso, respuesta);
+              return;
+            }
+            mostrarAviso(aviso, respuesta.urlPublica === false ? AVISO_URL_NO_PUBLICA : '', 'error');
+            pintarDirecciones(respuesta);
+            empresas = respuesta.empresas;
+            pintarTabla();
+          })
+          .withFailureHandler(function () {
+            document.getElementById('cargando-empresas').hidden = true;
+            mostrarAviso(aviso, 'No se pudieron cargar las empresas. Recarga la página para intentarlo de nuevo.', 'error');
+          })
+          .listarEmpresas(TOKEN);
+      }
+
+      function actualizarLista(empresa) {
+        const posicion = empresas.findIndex(function (existente) {
+          return existente.id === empresa.id;
+        });
+        if (posicion === -1) {
+          empresas.unshift(empresa);
+        } else {
+          empresas[posicion] = empresa;
+        }
+        pintarTabla();
+      }
+
+      /* ---------- Direcciones de la aplicación ---------- */
+      function pintarDirecciones(respuesta) {
+        const actual = respuesta.urlWeb || respuesta.urlApp || '';
+        document.getElementById('direccion-actual').textContent = actual || 'todavía no se conoce';
+        campoUrlApp.value = respuesta.urlFijada ? respuesta.urlApp : '';
+        campoUrlWeb.value = respuesta.urlWeb || '';
+        if (respuesta.urlPublica === false) {
+          panelDirecciones.open = true;
+        }
+      }
+
+      function guardarDireccion(boton, accion, mensajeOk) {
+        mostrarAviso(avisoDirecciones, '', 'info');
+        boton.disabled = true;
+        accion
+          .withSuccessHandler(function (respuesta) {
+            boton.disabled = false;
+            if (!respuesta || !respuesta.ok) {
+              fallo(avisoDirecciones, respuesta);
+              return;
+            }
+            pintarDirecciones(respuesta);
+            mostrarAviso(aviso, respuesta.urlPublica === false ? AVISO_URL_NO_PUBLICA : '', 'error');
+            mostrarAviso(avisoDirecciones, mensajeOk, 'ok');
+            cargarEmpresas();
+          })
+          .withFailureHandler(function () {
+            boton.disabled = false;
+            mostrarAviso(avisoDirecciones, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+          });
+        return accion;
+      }
+
+      document.getElementById('form-url-app').addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const valor = campoUrlApp.value.trim();
+        guardarDireccion(document.getElementById('btn-url-app'), google.script.run, valor ? 'Dirección guardada. Los QR ya usan esta dirección.' : 'Dirección detectada automáticamente.')
+          .guardarUrlPublica(TOKEN, valor);
+      });
+
+      document.getElementById('form-url-web').addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const valor = campoUrlWeb.value.trim();
+        guardarDireccion(document.getElementById('btn-url-web'), google.script.run, valor ? 'Dirección de la web guardada. Los QR y los enlaces apuntan a ella.' : 'Dirección de la web quitada: los enlaces vuelven a la aplicación de Apps Script.')
+          .guardarUrlWeb(TOKEN, valor);
+      });
+
+      /* ---------- Formulario ---------- */
+      function reiniciarFormulario() {
+        formulario.reset();
+        campoId.value = '';
+        campoActivo.checked = true;
+        campoEnviarEmail.checked = true;
+        filaEnviarEmail.hidden = false;
+        tituloFormulario.textContent = 'Nueva empresa';
+        botonGuardar.textContent = 'Crear empresa';
+        botonCancelar.hidden = true;
+        panelFormulario.classList.remove('editando');
+      }
+
+      function empezarEdicion(empresa) {
+        mostrarAviso(avisoFormulario, '', 'info');
+        campoId.value = empresa.id;
+        campoNombre.value = empresa.nombre;
+        campoEmail.value = empresa.email;
+        campoGoogle.value = empresa.googleUrl;
+        campoActivo.checked = empresa.activo;
+        filaEnviarEmail.hidden = true;
+        tituloFormulario.textContent = 'Editar empresa';
+        botonGuardar.textContent = 'Guardar cambios';
+        botonCancelar.hidden = false;
+        panelFormulario.classList.add('editando');
+        panelFormulario.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        campoNombre.focus();
+      }
+
+      botonCancelar.addEventListener('click', function () {
+        mostrarAviso(avisoFormulario, '', 'info');
+        reiniciarFormulario();
+      });
+
+      formulario.addEventListener('submit', function (evento) {
+        evento.preventDefault();
+        const datos = {
+          id: campoId.value,
+          nombre: campoNombre.value.trim(),
+          email: campoEmail.value.trim(),
+          googleUrl: campoGoogle.value.trim(),
+          activo: campoActivo.checked,
+          enviarEmail: campoEnviarEmail.checked
+        };
+
+        mostrarAviso(avisoFormulario, '', 'info');
+        botonGuardar.disabled = true;
+
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            botonGuardar.disabled = false;
+            if (!respuesta || !respuesta.ok) {
+              fallo(avisoFormulario, respuesta);
+              return;
+            }
+            actualizarLista(respuesta.empresa);
+            reiniciarFormulario();
+
+            if (!respuesta.creada) {
+              mostrarAviso(avisoFormulario, 'Cambios guardados.', 'ok');
+              return;
+            }
+            let mensaje = 'Empresa creada. Su QR y su acceso ya están listos.';
+            if (datos.enviarEmail) {
+              mensaje += respuesta.emailEnviado
+                ? ' Hemos enviado el acceso a ' + respuesta.empresa.email + '.'
+                : ' No se pudo enviar el email a la empresa.';
+            }
+            mostrarAviso(avisoFormulario, mensaje, 'ok');
+            abrirAcceso(respuesta.empresa, respuesta.passwordInicial || '');
+          })
+          .withFailureHandler(function () {
+            botonGuardar.disabled = false;
+            mostrarAviso(avisoFormulario, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+          })
+          .guardarEmpresa(TOKEN, datos);
+      });
+
+      /* ---------- Eliminar empresa ---------- */
+      function eliminarEmpresa(empresa) {
+        HR.confirmar({
+          titulo: '¿Eliminar ' + empresa.nombre + '?',
+          texto: 'Se borrarán la empresa, su acceso privado y todas sus valoraciones. Su QR dejará de funcionar. No se puede deshacer. ' +
+            'Si solo quieres que deje de recibir valoraciones, desactívala con «Editar».',
+          boton: 'Eliminar empresa',
+          alAceptar: function () {
+            google.script.run
+              .withSuccessHandler(function (respuesta) {
+                if (!respuesta || !respuesta.ok) {
+                  fallo(aviso, respuesta);
+                  return;
+                }
+                empresas = empresas.filter(function (existente) {
+                  return existente.id !== empresa.id;
+                });
+                if (campoId.value === empresa.id) {
+                  reiniciarFormulario();
+                }
+                pintarTabla();
+                mostrarAviso(aviso, empresa.nombre + ' eliminada, junto con sus valoraciones.', 'ok');
+              })
+              .withFailureHandler(function () {
+                mostrarAviso(aviso, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+              })
+              .eliminarEmpresa(TOKEN, empresa.id);
+          }
+        });
+      }
+
+      /* ---------- Ventana del acceso privado ---------- */
+      function pintarAcceso(empresa) {
+        empresaAcceso = empresa;
+        document.getElementById('acceso-titulo').textContent = 'Acceso de ' + empresa.nombre;
+        campoEnlaceAcceso.value = empresa.urlPanelEmpresa;
+        enlaceAbrirAcceso.href = empresa.urlPanelEmpresa;
+        document.getElementById('acceso-usuario').textContent = empresa.email;
+        document.getElementById('acceso-estado-clave').textContent = empresa.tieneClave
+          ? 'definida (no se puede consultar; si se pierde, crea una nueva)'
+          : 'todavía sin definir';
+      }
+
+      function abrirAcceso(empresa, claveNueva) {
+        pintarAcceso(empresa);
+        cajaClave.hidden = !claveNueva;
+        valorClave.textContent = claveNueva || '';
+        casillaRegenerar.checked = false;
+        casillaEnviarAcceso.checked = false;
+        botonNuevaClave.disabled = false;
+        mostrarAviso(avisoAcceso, empresa.urlPublica === false ? AVISO_URL_NO_PUBLICA : '', 'error');
+        veloAcceso.hidden = false;
+        document.getElementById('acceso-cerrar').focus();
+      }
+
+      function cerrarAcceso() {
+        veloAcceso.hidden = true;
+        cajaClave.hidden = true;
+        valorClave.textContent = '';
+        empresaAcceso = null;
+      }
+
+      botonNuevaClave.addEventListener('click', function () {
+        if (!empresaAcceso) {
+          return;
+        }
+        const enviar = casillaEnviarAcceso.checked;
+        botonNuevaClave.disabled = true;
+        mostrarAviso(avisoAcceso, '', 'info');
+
+        google.script.run
+          .withSuccessHandler(function (respuesta) {
+            botonNuevaClave.disabled = false;
+            if (!respuesta || !respuesta.ok) {
+              fallo(avisoAcceso, respuesta);
+              return;
+            }
+            actualizarLista(respuesta.empresa);
+            pintarAcceso(respuesta.empresa);
+            valorClave.textContent = respuesta.passwordNueva;
+            cajaClave.hidden = false;
+            casillaRegenerar.checked = false;
+            let mensaje = 'Contraseña nueva creada.';
+            if (enviar) {
+              mensaje += respuesta.emailEnviado
+                ? ' Hemos enviado el acceso a ' + respuesta.empresa.email + '.'
+                : ' No se pudo enviar el email a la empresa.';
+            }
+            mostrarAviso(avisoAcceso, mensaje, 'ok');
+          })
+          .withFailureHandler(function () {
+            botonNuevaClave.disabled = false;
+            mostrarAviso(avisoAcceso, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+          })
+          .restablecerAccesoEmpresa(TOKEN, empresaAcceso.id, {
+            regenerarEnlace: casillaRegenerar.checked,
+            enviarEmail: enviar
+          });
+      });
+
+      document.getElementById('acceso-copiar').addEventListener('click', function () {
+        const copiado = HR.copiar('', campoEnlaceAcceso);
+        mostrarAviso(avisoAcceso, copiado ? 'Enlace copiado.' : 'No se pudo copiar solo. Pulsa Ctrl+C con el enlace seleccionado.', copiado ? 'ok' : 'info');
+      });
+      document.getElementById('acceso-clave-copiar').addEventListener('click', function () {
+        const copiado = HR.copiar(valorClave.textContent, null);
+        mostrarAviso(avisoAcceso, copiado ? 'Contraseña copiada.' : 'No se pudo copiar solo. Selecciónala y pulsa Ctrl+C.', copiado ? 'ok' : 'info');
+      });
+      document.getElementById('acceso-qr').addEventListener('click', function () {
+        const empresa = empresaAcceso;
+        cerrarAcceso();
+        if (empresa) {
+          abrirQr(empresa);
+        }
+      });
+      document.getElementById('acceso-cerrar').addEventListener('click', cerrarAcceso);
+      veloAcceso.addEventListener('click', function (evento) {
+        if (evento.target === veloAcceso) {
+          cerrarAcceso();
+        }
+      });
+
+      /* ---------- Ventana del QR ---------- */
+      function nombreArchivoQr(nombre) {
+        const limpio = nombre
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+        return 'qr-' + (limpio || 'empresa') + '.png';
+      }
+
+      function abrirQr(empresa) {
+        empresaQr = empresa;
+        document.getElementById('qr-titulo').textContent = 'QR de ' + empresa.nombre;
+        campoUrlQr.value = empresa.urlValoracion;
+        enlaceAbrirQr.href = empresa.urlValoracion;
+        ayudaDescarga.hidden = true;
+
+        let mensaje = '';
+        let tipo = 'info';
+        if (!empresa.activo) {
+          mensaje = 'Esta empresa está inactiva: mientras no la actives, el QR mostrará que el enlace no está disponible.';
+        }
+
+        botonDescargarQr.disabled = false;
+        if (empresa.urlPublica === false) {
+          lienzoQr.hidden = true;
+          botonDescargarQr.disabled = true;
+          mensaje = AVISO_URL_NO_PUBLICA;
+          tipo = 'error';
+        } else {
+          try {
+            GeneradorQr.dibujar(lienzoQr, GeneradorQr.crear(empresa.urlValoracion), 1000);
+            lienzoQr.hidden = false;
+          } catch (error) {
+            lienzoQr.hidden = true;
+            botonDescargarQr.disabled = true;
+            mensaje = 'No se pudo generar el QR. Usa el enlace de valoración que aparece debajo.';
+            tipo = 'error';
+          }
+        }
+
+        marcoQr.hidden = lienzoQr.hidden;
+        mostrarAviso(avisoQr, mensaje, tipo);
+        velo.hidden = false;
+        botonCerrarQr.focus();
+      }
+
+      function cerrarQr() {
+        velo.hidden = true;
+        empresaQr = null;
+      }
+
+      botonCerrarQr.addEventListener('click', cerrarQr);
+      velo.addEventListener('click', function (evento) {
+        if (evento.target === velo) {
+          cerrarQr();
+        }
+      });
+      document.addEventListener('keydown', function (evento) {
+        if (evento.key === 'Escape' && !velo.hidden) {
+          cerrarQr();
+        }
+        if (evento.key === 'Escape' && !veloAcceso.hidden) {
+          cerrarAcceso();
+        }
+      });
+
+      document.getElementById('qr-copiar').addEventListener('click', function () {
+        campoUrlQr.focus();
+        campoUrlQr.select();
+        let copiado = false;
+        try {
+          copiado = document.execCommand('copy');
+        } catch (error) {
+          copiado = false;
+        }
+        mostrarAviso(avisoQr, copiado ? 'Enlace copiado.' : 'No se pudo copiar solo. Pulsa Ctrl+C con el enlace seleccionado.', copiado ? 'ok' : 'info');
+      });
+
+      botonDescargarQr.addEventListener('click', function () {
+        if (!empresaQr || lienzoQr.hidden) {
+          return;
+        }
+        ayudaDescarga.hidden = false;
+        lienzoQr.toBlob(function (blob) {
+          if (!blob) {
+            return;
+          }
+          const direccion = URL.createObjectURL(blob);
+          const enlace = document.createElement('a');
+          enlace.href = direccion;
+          enlace.download = nombreArchivoQr(empresaQr.nombre);
+          document.body.appendChild(enlace);
+          enlace.click();
+          document.body.removeChild(enlace);
+          setTimeout(function () {
+            URL.revokeObjectURL(direccion);
+          }, 2000);
+        }, 'image/png');
+      });
+
+      cargarEmpresas();
+    });
+  </script>
+</body>
+</html>
