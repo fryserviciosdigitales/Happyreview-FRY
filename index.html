@@ -11,7 +11,7 @@
   <noscript>HAPPYREVIEW necesita JavaScript.</noscript>
   <script>
     (function () {
-      var paginas = { login: 1, valoracion: 1, empresa: 1, dashboard: 1, empresas: 1, usuarios: 1 };
+      var paginas = { login: 1, valoracion: 1, empresa: 1, privacidad: 1, legal: 1, dashboard: 1, empresas: 1, usuarios: 1 };
       var consulta = new URLSearchParams(location.search);
       var pagina = String(consulta.get('page') || '').toLowerCase();
       if (!paginas[pagina]) {

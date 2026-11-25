@@ -383,6 +383,38 @@
   .resultado h1 { margin-bottom: 10px; }
   .resultado p { color: var(--texto-2); margin: 0 auto 24px; max-width: 34ch; }
   .resultado .btn { width: 100%; }
+  .resultado .formulario-privado { margin-top: 28px; }
+  .resultado .formulario-privado .campo { margin-bottom: 14px; }
+
+  /* Aviso de privacidad de primera capa (pantalla del cliente) */
+  .nota-legal { margin: 28px auto 0; max-width: 40ch; font-size: .78rem; line-height: 1.45; color: var(--apagado); text-align: center; }
+  .nota-legal a { color: var(--apagado); font-weight: 700; }
+
+  /* ---------- Páginas legales ---------- */
+  .pagina-legal { max-width: 46rem; margin: 0 auto; padding: 28px 18px 64px; }
+  .pagina-legal .marca-legal { font-weight: 800; letter-spacing: -.01em; margin-bottom: 18px; display: inline-block; color: var(--tinta); text-decoration: none; }
+  .pagina-legal h1 { margin-bottom: 8px; }
+  .pagina-legal h2 { margin: 28px 0 8px; }
+  .pagina-legal h3 { margin: 18px 0 6px; font-size: 1.02rem; }
+  .pagina-legal p, .pagina-legal li { color: var(--texto-2); }
+  .pagina-legal p { margin: 0 0 10px; }
+  .pagina-legal ul { margin: 0 0 10px; padding-left: 1.2rem; }
+  .pagina-legal li { margin-bottom: 4px; }
+  .pagina-legal .fecha-legal { font-size: .85rem; color: var(--apagado); margin-bottom: 18px; }
+  .pagina-legal .tabla-legal { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: .92rem; }
+  .pagina-legal .tabla-legal th, .pagina-legal .tabla-legal td { text-align: left; vertical-align: top; padding: 8px 10px; border: 1px solid var(--linea); color: var(--texto-2); }
+  .pagina-legal .tabla-legal th { background: var(--superficie); color: var(--texto); width: 32%; }
+  .pagina-legal .pendiente { background: var(--sol-suave); border-radius: 4px; padding: 0 3px; }
+  .pagina-legal .enlaces-legales { margin-top: 28px; font-size: .9rem; }
+
+  /* Opciones de «cómo se pide la reseña en Google» */
+  .opciones-modo { display: grid; gap: 10px; margin: 12px 0 14px; }
+  .opcion-modo { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border: 1px solid var(--linea-fuerte); border-radius: 12px; background: var(--superficie); cursor: pointer; }
+  .opcion-modo:has(input:checked) { border-color: var(--tinta); box-shadow: 0 0 0 2px var(--tinta); }
+  .opcion-modo input { width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--tinta); flex: none; }
+  .opcion-modo strong { display: block; margin-bottom: 2px; }
+  .opcion-modo span { display: block; font-size: .9rem; color: var(--texto-2); }
+  .opcion-modo .recomendada { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 99px; background: var(--pos-suave); color: #0a5a3a; font-size: .75rem; font-weight: 800; }
 
   @media (min-width: 560px) {
     .cliente { justify-content: center; }
@@ -484,9 +516,25 @@
      * Si el servidor responde con otra página (por ejemplo el login porque caducó la
      * sesión), redirige a ella.
      */
+    /** Enlace al aviso legal al pie de las pantallas de acceso (login de administrador y de empresa). */
+    function anadirPie(APP, pagina) {
+      if (pagina !== 'login' && pagina !== 'empresa') {
+        return;
+      }
+      const parrafo = document.createElement('p');
+      parrafo.className = 'nota-legal';
+      const enlace = document.createElement('a');
+      enlace.href = String(APP.baseUrl || '') + '?page=legal';
+      enlace.target = '_top';
+      enlace.textContent = 'Aviso legal y privacidad';
+      parrafo.appendChild(enlace);
+      document.body.appendChild(parrafo);
+    }
+
     function preparar(APP, pagina, listo) {
       if (APP.modo !== 'web') {
         listo();
+        anadirPie(APP, pagina);
         return;
       }
 
@@ -539,6 +587,7 @@
           }
           preparada = true;
           listo();
+          anadirPie(APP, pagina);
         })
         .withFailureHandler(function () {
           mensajeFatal('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo en unos segundos.');
@@ -673,12 +722,25 @@
           <div class="campo">
             <label for="email">Email de la empresa</label>
             <input id="email" type="email" maxlength="254" autocomplete="email" required>
-            <span class="ayuda">Recibirá aquí los comentarios privados de 1 a 3 estrellas.</span>
+            <span class="ayuda">Recibirá aquí los comentarios privados de los clientes que puntúen de 1 a 3 estrellas.</span>
           </div>
           <div class="campo">
             <label for="google-url">Enlace de reseñas de Google</label>
             <input id="google-url" type="url" maxlength="2000" placeholder="https://g.page/r/…/review" required>
-            <span class="ayuda">A esta dirección irán los clientes que valoren con 4 o 5 estrellas.</span>
+            <span class="ayuda">A esta dirección irán los clientes que quieran dejar su reseña (cualquiera en la opción abierta; los de 4 y 5 estrellas con filtro).</span>
+          </div>
+
+          <div class="campo">
+            <label for="modo-google">Cómo se pide la reseña en Google</label>
+            <select id="modo-google">
+              <option value="ABIERTO">Abierta (recomendada): cualquiera ve el botón de Google</option>
+              <option value="FILTRO">Con filtro: solo 4 y 5 estrellas ven el botón</option>
+            </select>
+            <span class="ayuda">La propia empresa puede cambiarlo desde su panel. El filtro no cumple las normas de Google.</span>
+          </div>
+          <div class="casilla" id="fila-acepta-filtro" hidden>
+            <input id="acepta-filtro" type="checkbox">
+            <label for="acepta-filtro">La empresa ha sido informada de que Google no permite pedir reseñas solo a los clientes satisfechos y asume el riesgo.</label>
           </div>
 
           <div class="casilla">
@@ -1240,6 +1302,19 @@
       const campoEmail = document.getElementById('email');
       const campoGoogle = document.getElementById('google-url');
       const campoActivo = document.getElementById('activo');
+      const campoModo = document.getElementById('modo-google');
+      const filaAceptaFiltro = document.getElementById('fila-acepta-filtro');
+      const campoAceptaFiltro = document.getElementById('acepta-filtro');
+      let modoOriginal = 'ABIERTO';
+
+      function actualizarAceptaFiltro() {
+        const hayCambioAFiltro = campoModo.value === 'FILTRO' && modoOriginal !== 'FILTRO';
+        filaAceptaFiltro.hidden = !hayCambioAFiltro;
+        if (!hayCambioAFiltro) {
+          campoAceptaFiltro.checked = false;
+        }
+      }
+      campoModo.addEventListener('change', actualizarAceptaFiltro);
       const campoEnviarEmail = document.getElementById('enviar-email');
       const filaEnviarEmail = document.getElementById('fila-enviar-email');
       const botonGuardar = document.getElementById('btn-guardar');
@@ -1353,6 +1428,11 @@
 
           const tdEstado = crear('td', 'nowrap');
           tdEstado.appendChild(crear('span', 'etiqueta ' + (empresa.activo ? 'etiqueta-pos' : 'etiqueta-apagada'), empresa.activo ? 'Activa' : 'Inactiva'));
+          if (empresa.modoGoogle === 'FILTRO') {
+            const etiquetaFiltro = crear('span', 'etiqueta etiqueta-neg', 'Con filtro');
+            etiquetaFiltro.title = empresa.modoAceptado || 'Solo 4 y 5 estrellas ven el botón de Google';
+            tdEstado.appendChild(etiquetaFiltro);
+          }
           fila.appendChild(tdEstado);
 
           fila.appendChild(crear('td', 'nowrap', empresa.fecha));
@@ -1478,6 +1558,9 @@
         formulario.reset();
         campoId.value = '';
         campoActivo.checked = true;
+        campoModo.value = 'ABIERTO';
+        modoOriginal = 'ABIERTO';
+        actualizarAceptaFiltro();
         campoEnviarEmail.checked = true;
         filaEnviarEmail.hidden = false;
         tituloFormulario.textContent = 'Nueva empresa';
@@ -1493,6 +1576,9 @@
         campoEmail.value = empresa.email;
         campoGoogle.value = empresa.googleUrl;
         campoActivo.checked = empresa.activo;
+        modoOriginal = empresa.modoGoogle === 'FILTRO' ? 'FILTRO' : 'ABIERTO';
+        campoModo.value = modoOriginal;
+        actualizarAceptaFiltro();
         filaEnviarEmail.hidden = true;
         tituloFormulario.textContent = 'Editar empresa';
         botonGuardar.textContent = 'Guardar cambios';
@@ -1515,9 +1601,15 @@
           email: campoEmail.value.trim(),
           googleUrl: campoGoogle.value.trim(),
           activo: campoActivo.checked,
+          modoGoogle: campoModo.value,
+          aceptaFiltro: campoAceptaFiltro.checked,
           enviarEmail: campoEnviarEmail.checked
         };
 
+        if (datos.modoGoogle === 'FILTRO' && modoOriginal !== 'FILTRO' && !datos.aceptaFiltro) {
+          mostrarAviso(avisoFormulario, 'Para activar el filtro marca la casilla de confirmación.', 'error');
+          return;
+        }
         mostrarAviso(avisoFormulario, '', 'info');
         botonGuardar.disabled = true;
 

@@ -383,6 +383,38 @@
   .resultado h1 { margin-bottom: 10px; }
   .resultado p { color: var(--texto-2); margin: 0 auto 24px; max-width: 34ch; }
   .resultado .btn { width: 100%; }
+  .resultado .formulario-privado { margin-top: 28px; }
+  .resultado .formulario-privado .campo { margin-bottom: 14px; }
+
+  /* Aviso de privacidad de primera capa (pantalla del cliente) */
+  .nota-legal { margin: 28px auto 0; max-width: 40ch; font-size: .78rem; line-height: 1.45; color: var(--apagado); text-align: center; }
+  .nota-legal a { color: var(--apagado); font-weight: 700; }
+
+  /* ---------- Páginas legales ---------- */
+  .pagina-legal { max-width: 46rem; margin: 0 auto; padding: 28px 18px 64px; }
+  .pagina-legal .marca-legal { font-weight: 800; letter-spacing: -.01em; margin-bottom: 18px; display: inline-block; color: var(--tinta); text-decoration: none; }
+  .pagina-legal h1 { margin-bottom: 8px; }
+  .pagina-legal h2 { margin: 28px 0 8px; }
+  .pagina-legal h3 { margin: 18px 0 6px; font-size: 1.02rem; }
+  .pagina-legal p, .pagina-legal li { color: var(--texto-2); }
+  .pagina-legal p { margin: 0 0 10px; }
+  .pagina-legal ul { margin: 0 0 10px; padding-left: 1.2rem; }
+  .pagina-legal li { margin-bottom: 4px; }
+  .pagina-legal .fecha-legal { font-size: .85rem; color: var(--apagado); margin-bottom: 18px; }
+  .pagina-legal .tabla-legal { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: .92rem; }
+  .pagina-legal .tabla-legal th, .pagina-legal .tabla-legal td { text-align: left; vertical-align: top; padding: 8px 10px; border: 1px solid var(--linea); color: var(--texto-2); }
+  .pagina-legal .tabla-legal th { background: var(--superficie); color: var(--texto); width: 32%; }
+  .pagina-legal .pendiente { background: var(--sol-suave); border-radius: 4px; padding: 0 3px; }
+  .pagina-legal .enlaces-legales { margin-top: 28px; font-size: .9rem; }
+
+  /* Opciones de «cómo se pide la reseña en Google» */
+  .opciones-modo { display: grid; gap: 10px; margin: 12px 0 14px; }
+  .opcion-modo { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border: 1px solid var(--linea-fuerte); border-radius: 12px; background: var(--superficie); cursor: pointer; }
+  .opcion-modo:has(input:checked) { border-color: var(--tinta); box-shadow: 0 0 0 2px var(--tinta); }
+  .opcion-modo input { width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--tinta); flex: none; }
+  .opcion-modo strong { display: block; margin-bottom: 2px; }
+  .opcion-modo span { display: block; font-size: .9rem; color: var(--texto-2); }
+  .opcion-modo .recomendada { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 99px; background: var(--pos-suave); color: #0a5a3a; font-size: .75rem; font-weight: 800; }
 
   @media (min-width: 560px) {
     .cliente { justify-content: center; }
@@ -484,9 +516,25 @@
      * Si el servidor responde con otra página (por ejemplo el login porque caducó la
      * sesión), redirige a ella.
      */
+    /** Enlace al aviso legal al pie de las pantallas de acceso (login de administrador y de empresa). */
+    function anadirPie(APP, pagina) {
+      if (pagina !== 'login' && pagina !== 'empresa') {
+        return;
+      }
+      const parrafo = document.createElement('p');
+      parrafo.className = 'nota-legal';
+      const enlace = document.createElement('a');
+      enlace.href = String(APP.baseUrl || '') + '?page=legal';
+      enlace.target = '_top';
+      enlace.textContent = 'Aviso legal y privacidad';
+      parrafo.appendChild(enlace);
+      document.body.appendChild(parrafo);
+    }
+
     function preparar(APP, pagina, listo) {
       if (APP.modo !== 'web') {
         listo();
+        anadirPie(APP, pagina);
         return;
       }
 
@@ -539,6 +587,7 @@
           }
           preparada = true;
           listo();
+          anadirPie(APP, pagina);
         })
         .withFailureHandler(function () {
           mensajeFatal('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo en unos segundos.');
@@ -744,6 +793,36 @@
         <div id="aviso-copiar" class="aviso" role="status" hidden></div>
       </section>
 
+      <section class="bloque" aria-labelledby="titulo-modo">
+        <h2 id="titulo-modo">Cómo se pide la reseña en Google</h2>
+        <p class="ayuda">Elige qué ve tu cliente después de puntuar. Puedes cambiarlo cuando quieras.</p>
+        <div id="aviso-modo" class="aviso" role="alert" hidden></div>
+        <form id="form-modo" novalidate>
+          <div class="opciones-modo" role="radiogroup" aria-labelledby="titulo-modo">
+            <label class="opcion-modo">
+              <input type="radio" name="modo" value="ABIERTO">
+              <div>
+                <strong>Abierta <span class="recomendada">Recomendada</span></strong>
+                <span>Cualquier cliente ve el botón de Google, ponga la nota que ponga. Quien puntúa de 1 a 3 estrellas puede además contarte en privado qué ha pasado. Es la opción que respeta las normas de Google.</span>
+              </div>
+            </label>
+            <label class="opcion-modo">
+              <input type="radio" name="modo" value="FILTRO">
+              <div>
+                <strong>Con filtro</strong>
+                <span>Solo los clientes que ponen 4 o 5 estrellas ven el botón de Google. Los de 1 a 3 solo pueden dejarte un comentario privado. Sube tu nota pública, pero Google no permite pedir reseñas solo a los clientes satisfechos y puede retirar reseñas o sancionar tu ficha.</span>
+              </div>
+            </label>
+          </div>
+          <div class="casilla" id="fila-acepto-filtro" hidden>
+            <input id="acepto-filtro" type="checkbox">
+            <label for="acepto-filtro">Entiendo que Google no permite pedir reseñas solo a los clientes satisfechos, que puede retirar reseñas o sancionar mi ficha, y asumo ese riesgo.</label>
+          </div>
+          <p class="ayuda" id="modo-registro" hidden></p>
+          <button id="btn-modo" class="btn btn-primario" type="submit">Guardar opción</button>
+        </form>
+      </section>
+
       <section class="bloque" aria-labelledby="titulo-lista">
         <h2 id="titulo-lista">Valoraciones</h2>
         <div class="tabla-caja">
@@ -924,6 +1003,65 @@
           return crear('td', clase || '', texto);
         }
 
+        /* ---------- Cómo se pide la reseña en Google ---------- */
+        const formularioModo = document.getElementById('form-modo');
+        const filaAcepto = document.getElementById('fila-acepto-filtro');
+        const casillaAcepto = document.getElementById('acepto-filtro');
+        const avisoModo = document.getElementById('aviso-modo');
+        const botonModo = document.getElementById('btn-modo');
+        let modoGuardado = 'ABIERTO';
+
+        function modoElegido() {
+          const marcada = formularioModo.querySelector('input[name="modo"]:checked');
+          return marcada ? marcada.value : modoGuardado;
+        }
+
+        function actualizarAcepto() {
+          filaAcepto.hidden = !(modoElegido() === 'FILTRO' && modoGuardado !== 'FILTRO');
+        }
+
+        function pintarModo(empresa) {
+          modoGuardado = empresa.modoGoogle === 'FILTRO' ? 'FILTRO' : 'ABIERTO';
+          formularioModo.querySelectorAll('input[name="modo"]').forEach(function (radio) {
+            radio.checked = radio.value === modoGuardado;
+          });
+          casillaAcepto.checked = false;
+          const registro = document.getElementById('modo-registro');
+          registro.textContent = empresa.modoAceptado ? 'Último cambio: ' + empresa.modoAceptado : '';
+          registro.hidden = !empresa.modoAceptado;
+          actualizarAcepto();
+        }
+
+        formularioModo.querySelectorAll('input[name="modo"]').forEach(function (radio) {
+          radio.addEventListener('change', actualizarAcepto);
+        });
+
+        formularioModo.addEventListener('submit', function (evento) {
+          evento.preventDefault();
+          const modo = modoElegido();
+          if (modo === 'FILTRO' && modoGuardado !== 'FILTRO' && !casillaAcepto.checked) {
+            mostrarAviso(avisoModo, 'Para usar el filtro marca la casilla de confirmación.', 'error');
+            return;
+          }
+          mostrarAviso(avisoModo, '', 'info');
+          botonModo.disabled = true;
+          google.script.run
+            .withSuccessHandler(function (respuesta) {
+              botonModo.disabled = false;
+              if (!respuesta || !respuesta.ok) {
+                fallo(avisoModo, respuesta);
+                return;
+              }
+              cargar('');
+              mostrarAviso(avisoModo, modo === 'FILTRO' ? 'Opción guardada: solo los clientes de 4 y 5 estrellas verán el botón de Google.' : 'Opción guardada: cualquier cliente verá el botón de Google.', 'ok');
+            })
+            .withFailureHandler(function () {
+              botonModo.disabled = false;
+              mostrarAviso(avisoModo, 'No se pudo conectar con el servidor. Inténtalo de nuevo.', 'error');
+            })
+            .guardarModoGoogle(TOKEN, modo, casillaAcepto.checked);
+        });
+
         function pintar(panel) {
           const resumen = panel.resumen;
           document.getElementById('dato-media').textContent = resumen.total === 0 ? '–' : formatoNumero(resumen.media, 2);
@@ -934,6 +1072,7 @@
           document.getElementById('dato-google').textContent = formatoNumero(resumen.fueronAGoogle, 0);
           document.getElementById('dato-comprobadas').textContent = formatoNumero(resumen.confirmadas, 0);
 
+          pintarModo(panel.empresa);
           document.getElementById('url-valoracion').value = panel.empresa.urlValoracion;
           document.getElementById('btn-abrir').href = panel.empresa.urlValoracion;
           document.getElementById('ayuda-mas').hidden = !panel.hayMas;
@@ -945,6 +1084,7 @@
           panel.valoraciones.forEach(function (valoracion) {
             const fila = crear('tr');
             const privada = valoracion.estrellas < 4;
+            const sinGoogle = privada && !valoracion.google && !valoracion.confirmada;
 
             fila.appendChild(celda(valoracion.fecha, 'nowrap'));
 
@@ -957,7 +1097,7 @@
             fila.appendChild(celda(valoracion.email || '—'));
 
             const tdGoogle = crear('td', 'nowrap');
-            if (privada) {
+            if (sinGoogle) {
               tdGoogle.textContent = '—';
             } else if (valoracion.confirmada) {
               tdGoogle.appendChild(crear('span', 'etiqueta etiqueta-pos', 'Comprobada'));
@@ -969,7 +1109,7 @@
             fila.appendChild(tdGoogle);
 
             const tdAcciones = crear('td');
-            if (!privada) {
+            if (!sinGoogle) {
               const boton = crear('button', 'btn btn-secundario btn-pequeno', valoracion.confirmada ? 'Quitar marca' : 'Marcar comprobada');
               boton.type = 'button';
               boton.addEventListener('click', function () {
